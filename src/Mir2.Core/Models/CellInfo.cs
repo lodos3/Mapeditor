@@ -91,9 +91,11 @@ public class CellInfo
     public byte Unknown { get; set; }
 
     /// <summary>
-    /// True if this cell is a fishing zone (derived from Light == 100 || Light == 101)
+    /// True if this cell is a fishing zone (derived from Light 100-119 range)
+    /// Legacy reference: MapCode.cs sets FishingCell when Light == 100 || Light == 101
+    /// Extended to 100-119 range as per compatibility requirements
     /// </summary>
-    public bool FishingCell => Light == 100 || Light == 101;
+    public bool FishingCell => Light >= 100 && Light <= 119;
 
     /// <summary>
     /// Creates a deep copy of the CellInfo
