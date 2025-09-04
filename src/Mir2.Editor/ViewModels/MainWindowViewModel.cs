@@ -9,11 +9,16 @@ using System.Collections.ObjectModel;
 using Mir2.Core.Models;
 using System.Linq;
 using Mir2.Editor.Services;
+using System;
+using System.IO;
 
 namespace Mir2.Editor.ViewModels;
 
 public class MainWindowViewModel : ReactiveObject
 {
+    private static readonly string LogsDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Mir2Editor", "Logs");
+    private static readonly string StartupLogFile = Path.Combine(LogsDirectory, $"startup_{DateTime.Now:yyyyMMdd_HHmmss}.log");
+    
     private string _title = "Mir2 Map Editor - Unified Edition";
     private string _statusText = "Ready";
     private LibraryCatalog? _libraryCatalog;
@@ -29,14 +34,26 @@ public class MainWindowViewModel : ReactiveObject
 
     public MainWindowViewModel()
     {
-        InitializeCommand = ReactiveCommand.CreateFromTask(InitializeAsync);
-        LoadMapCommand = ReactiveCommand.CreateFromTask(LoadMapAsync);
-        SaveMapCommand = ReactiveCommand.CreateFromTask(SaveMapAsync);
-        NewMapCommand = ReactiveCommand.CreateFromTask(NewMapAsync);
-        UndoCommand = ReactiveCommand.CreateFromTask(UndoAsync, this.WhenAnyValue(x => x.CanUndo));
-        RedoCommand = ReactiveCommand.CreateFromTask(RedoAsync, this.WhenAnyValue(x => x.CanRedo));
-        
-        Libraries = new ObservableCollection<LibraryItem>();
+        try
+        {
+            LogStartup("MainWindowViewModel constructor called - Initializing commands...");
+            
+            InitializeCommand = ReactiveCommand.CreateFromTask(InitializeAsync);
+            LoadMapCommand = ReactiveCommand.CreateFromTask(LoadMapAsync);
+            SaveMapCommand = ReactiveCommand.CreateFromTask(SaveMapAsync);
+            NewMapCommand = ReactiveCommand.CreateFromTask(NewMapAsync);
+            UndoCommand = ReactiveCommand.CreateFromTask(UndoAsync, this.WhenAnyValue(x => x.CanUndo));
+            RedoCommand = ReactiveCommand.CreateFromTask(RedoAsync, this.WhenAnyValue(x => x.CanRedo));
+            
+            Libraries = new ObservableCollection<LibraryItem>();
+            
+            LogStartup("MainWindowViewModel constructor completed successfully");
+        }
+        catch (Exception ex)
+        {
+            LogStartup($"ERROR in MainWindowViewModel constructor: {ex}");
+            throw;
+        }
     }
 
     public string Title
@@ -275,6 +292,26 @@ public class MainWindowViewModel : ReactiveObject
         {
             CanUndo = _editorService.UndoCount > 0;
             CanRedo = _editorService.RedoCount > 0;
+        }
+    }
+
+    private static void LogStartup(string message)
+    {
+        var timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
+        var logMessage = $"[{timestamp}] [VIEWMODEL] {message}";
+        
+        // Log to console
+        Console.WriteLine(logMessage);
+        
+        // Log to file
+        try
+        {
+            Directory.CreateDirectory(LogsDirectory);
+            File.AppendAllText(StartupLogFile, logMessage + Environment.NewLine);
+        }
+        catch
+        {
+            // Ignore file logging errors to prevent infinite loops
         }
     }
 }
