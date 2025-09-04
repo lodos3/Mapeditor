@@ -6,3 +6,9 @@
 /.vs
 /Map Editor/bin
 /Map Editor/obj
+
+# New solution build artifacts
+**/bin/
+**/obj/
+*.user
+*.suo
