@@ -1,0 +1,6 @@
+<!-- Simple placeholder icon -->
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+  <rect width="16" height="16" fill="#333"/>
+  <rect x="2" y="2" width="12" height="12" fill="#666"/>
+  <text x="8" y="12" text-anchor="middle" fill="white" font-size="10">M</text>
+</svg>

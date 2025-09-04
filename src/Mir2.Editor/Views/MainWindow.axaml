@@ -1,0 +1,172 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:Mir2.Editor.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
+        x:Class="Mir2.Editor.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="{Binding Title}"
+        MinWidth="1000" MinHeight="600"
+        Width="1200" Height="800">
+
+    <Design.DataContext>
+        <!-- This only sets the DataContext for the previewer in an IDE,
+             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+
+    <Grid RowDefinitions="Auto,*,Auto">
+        <!-- Menu Bar -->
+        <Menu Grid.Row="0">
+            <MenuItem Header="_File">
+                <MenuItem Header="_New Map" Click="OnNewMapClick"/>
+                <MenuItem Header="_Load Map" Click="OnLoadMapClick"/>
+                <MenuItem Header="_Save Map" Click="OnSaveMapClick"/>
+                <Separator/>
+                <MenuItem Header="E_xit"/>
+            </MenuItem>
+            <MenuItem Header="_Edit">
+                <MenuItem Header="_Undo"/>
+                <MenuItem Header="_Redo"/>
+                <Separator/>
+                <MenuItem Header="_Copy"/>
+                <MenuItem Header="_Paste"/>
+            </MenuItem>
+            <MenuItem Header="_View">
+                <MenuItem Header="_Zoom In"/>
+                <MenuItem Header="_Zoom Out"/>
+                <MenuItem Header="_Reset Zoom"/>
+                <Separator/>
+                <MenuItem Header="Show _Grid"/>
+                <MenuItem Header="Show _Objects"/>
+            </MenuItem>
+            <MenuItem Header="_Tools">
+                <MenuItem Header="_Library Manager"/>
+                <MenuItem Header="_Map Properties"/>
+                <MenuItem Header="_Cell Information"/>
+            </MenuItem>
+            <MenuItem Header="_Help">
+                <MenuItem Header="_About"/>
+            </MenuItem>
+        </Menu>
+
+        <!-- Main Content Area -->
+        <Grid Grid.Row="1" ColumnDefinitions="200,5,*,5,300">
+            
+            <!-- Left Panel - Library Browser -->
+            <Border Grid.Column="0" Background="#F5F5F5" BorderBrush="#CCCCCC" BorderThickness="0,0,1,0">
+                <StackPanel Margin="10">
+                    <TextBlock Text="Libraries" FontWeight="Bold" Margin="0,0,0,10"/>
+                    <Button Content="Initialize" Click="OnInitializeClick" 
+                            HorizontalAlignment="Stretch" Margin="0,0,0,10"/>
+                    <ListBox ItemsSource="{Binding Libraries}" Height="200" Margin="0,0,0,10">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel>
+                                    <TextBlock Text="{Binding Name}" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Type}" FontSize="12" Foreground="Gray"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    <Expander Header="Textures" IsExpanded="True">
+                        <ListBox Height="150">
+                            <!-- TODO: Add texture thumbnails -->
+                        </ListBox>
+                    </Expander>
+                </StackPanel>
+            </Border>
+
+            <GridSplitter Grid.Column="1" Background="Gray"/>
+
+            <!-- Center Panel - Map Editor -->
+            <Border Grid.Column="2" Background="White" BorderBrush="#CCCCCC" BorderThickness="1">
+                <Grid>
+                    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                        <Canvas Name="MapCanvas" Background="LightGray" Width="1600" Height="1200">
+                            <!-- Map rendering will go here -->
+                            <Rectangle Fill="LightBlue" Width="1600" Height="1200" Opacity="0.3"/>
+                            <TextBlock Text="Map Editor Area&#x0a;(Map rendering will be implemented here)" 
+                                     Canvas.Left="400" Canvas.Top="300" 
+                                     FontSize="16" Foreground="DarkBlue" 
+                                     HorizontalAlignment="Center"/>
+                        </Canvas>
+                    </ScrollViewer>
+                    
+                    <!-- Map Controls Overlay -->
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Right" 
+                               Margin="10" Background="White" Opacity="0.9">
+                        <Button Content="+" Margin="2"/>
+                        <Button Content="-" Margin="2"/>
+                        <Button Content="Reset" Margin="2"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <GridSplitter Grid.Column="3" Background="Gray"/>
+
+            <!-- Right Panel - Properties and Tools -->
+            <Border Grid.Column="4" Background="#F5F5F5" BorderBrush="#CCCCCC" BorderThickness="1,0,0,0">
+                <StackPanel Margin="10">
+                    <TextBlock Text="Properties" FontWeight="Bold" Margin="0,0,0,10"/>
+                    
+                    <Expander Header="Cell Information" IsExpanded="True">
+                        <StackPanel Margin="0,5">
+                            <StackPanel Orientation="Horizontal" Margin="0,2">
+                                <TextBlock Text="X:" Width="30"/>
+                                <TextBox Text="0" Width="60"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,2">
+                                <TextBlock Text="Y:" Width="30"/>
+                                <TextBox Text="0" Width="60"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,2">
+                                <TextBlock Text="Light:" Width="50"/>
+                                <Slider Width="100" Minimum="0" Maximum="255" Value="100"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Expander>
+                    
+                    <Expander Header="Layer Settings" IsExpanded="True" Margin="0,10,0,0">
+                        <StackPanel Margin="0,5">
+                            <CheckBox Content="Background Layer" IsChecked="True"/>
+                            <CheckBox Content="Middle Layer" IsChecked="True"/>
+                            <CheckBox Content="Front Layer" IsChecked="True"/>
+                            <CheckBox Content="Objects Layer" IsChecked="True"/>
+                        </StackPanel>
+                    </Expander>
+                    
+                    <Expander Header="Tools" IsExpanded="True" Margin="0,10,0,0">
+                        <StackPanel Margin="0,5">
+                            <StackPanel Orientation="Horizontal" Margin="0,2">
+                                <RadioButton Content="Select" IsChecked="True"/>
+                                <RadioButton Content="Paint" Margin="10,0,0,0"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,2">
+                                <RadioButton Content="Erase"/>
+                                <RadioButton Content="Fill" Margin="15,0,0,0"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Expander>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <!-- Status Bar -->
+        <Border Grid.Row="2" Background="#F0F0F0" BorderBrush="#CCCCCC" BorderThickness="0,1,0,0">
+            <Grid ColumnDefinitions="*,Auto,Auto,Auto">
+                <TextBlock Grid.Column="0" Text="{Binding StatusText}" 
+                          Margin="10,5" VerticalAlignment="Center"/>
+                <TextBlock Grid.Column="1" Text="Zoom: 100%" 
+                          Margin="10,5" VerticalAlignment="Center"/>
+                <TextBlock Grid.Column="2" Text="Pos: 0,0" 
+                          Margin="10,5" VerticalAlignment="Center"/>
+                <TextBlock Grid.Column="3" Text="Ready" 
+                          Margin="10,5" VerticalAlignment="Center"/>
+            </Grid>
+        </Border>
+    </Grid>
+
+</Window>
