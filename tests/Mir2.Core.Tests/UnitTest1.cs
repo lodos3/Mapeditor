@@ -52,11 +52,17 @@ public class MapReaderWriterTests
         var cellNormal = new CellInfo { Light = 50 };
         var cellFishing100 = new CellInfo { Light = 100 };
         var cellFishing101 = new CellInfo { Light = 101 };
+        var cellFishing119 = new CellInfo { Light = 119 };
+        var cellAboveRange = new CellInfo { Light = 120 };
+        var cellBelowRange = new CellInfo { Light = 99 };
 
         // Act & Assert
         Assert.False(cellNormal.FishingCell);
+        Assert.False(cellBelowRange.FishingCell);
+        Assert.False(cellAboveRange.FishingCell);
         Assert.True(cellFishing100.FishingCell);
         Assert.True(cellFishing101.FishingCell);
+        Assert.True(cellFishing119.FishingCell);
     }
 
     [Fact]
