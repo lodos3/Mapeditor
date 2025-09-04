@@ -1,0 +1,13 @@
+/home/runner/work/Mapeditor/Mapeditor/src/Mir2.Core/bin/Debug/net8.0/Mir2.Core.deps.json
+/home/runner/work/Mapeditor/Mapeditor/src/Mir2.Core/bin/Debug/net8.0/Mir2.Core.dll
+/home/runner/work/Mapeditor/Mapeditor/src/Mir2.Core/bin/Debug/net8.0/Mir2.Core.pdb
+/home/runner/work/Mapeditor/Mapeditor/src/Mir2.Core/obj/Debug/net8.0/Mir2.Core.csproj.AssemblyReference.cache
+/home/runner/work/Mapeditor/Mapeditor/src/Mir2.Core/obj/Debug/net8.0/Mir2.Core.GeneratedMSBuildEditorConfig.editorconfig
+/home/runner/work/Mapeditor/Mapeditor/src/Mir2.Core/obj/Debug/net8.0/Mir2.Core.AssemblyInfoInputs.cache
+/home/runner/work/Mapeditor/Mapeditor/src/Mir2.Core/obj/Debug/net8.0/Mir2.Core.AssemblyInfo.cs
+/home/runner/work/Mapeditor/Mapeditor/src/Mir2.Core/obj/Debug/net8.0/Mir2.Core.csproj.CoreCompileInputs.cache
+/home/runner/work/Mapeditor/Mapeditor/src/Mir2.Core/obj/Debug/net8.0/Mir2.Core.sourcelink.json
+/home/runner/work/Mapeditor/Mapeditor/src/Mir2.Core/obj/Debug/net8.0/Mir2.Core.dll
+/home/runner/work/Mapeditor/Mapeditor/src/Mir2.Core/obj/Debug/net8.0/refint/Mir2.Core.dll
+/home/runner/work/Mapeditor/Mapeditor/src/Mir2.Core/obj/Debug/net8.0/Mir2.Core.pdb
+/home/runner/work/Mapeditor/Mapeditor/src/Mir2.Core/obj/Debug/net8.0/ref/Mir2.Core.dll
