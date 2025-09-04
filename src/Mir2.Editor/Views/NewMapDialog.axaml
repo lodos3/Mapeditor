@@ -1,0 +1,48 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:Mir2.Editor.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="350" d:DesignHeight="250"
+        x:Class="Mir2.Editor.Views.NewMapDialog"
+        x:DataType="vm:NewMapDialogViewModel"
+        Title="Create New Map"
+        Width="350" Height="250"
+        CanResize="false"
+        WindowStartupLocation="CenterOwner">
+
+    <Design.DataContext>
+        <vm:NewMapDialogViewModel/>
+    </Design.DataContext>
+
+    <Grid Margin="20" RowDefinitions="Auto,10,Auto,10,Auto,10,Auto,20,Auto">
+        <TextBlock Grid.Row="0" Text="Create New Map" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
+        
+        <Grid Grid.Row="2" ColumnDefinitions="100,10,*">
+            <TextBlock Grid.Column="0" Text="Map Name:" VerticalAlignment="Center"/>
+            <TextBox Grid.Column="2" Text="{Binding Name}" />
+        </Grid>
+        
+        <Grid Grid.Row="4" ColumnDefinitions="100,10,*,20,*">
+            <TextBlock Grid.Column="0" Text="Dimensions:" VerticalAlignment="Center"/>
+            <StackPanel Grid.Column="2" Orientation="Horizontal">
+                <TextBlock Text="Width:" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                <NumericUpDown Value="{Binding Width}" Minimum="1" Maximum="1000" Width="80"/>
+            </StackPanel>
+            <StackPanel Grid.Column="4" Orientation="Horizontal">
+                <TextBlock Text="Height:" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                <NumericUpDown Value="{Binding Height}" Minimum="1" Maximum="1000" Width="80"/>
+            </StackPanel>
+        </Grid>
+        
+        <TextBlock Grid.Row="6" Text="Maximum map size is 1000x1000" FontSize="12" 
+                  Foreground="Gray" HorizontalAlignment="Center"/>
+        
+        <StackPanel Grid.Row="8" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Name="OkButton" Content="Create" IsDefault="True" Margin="0,0,10,0"
+                    Click="OnOkClick" IsEnabled="{Binding IsValid}"/>
+            <Button Name="CancelButton" Content="Cancel" IsCancel="True"
+                    Click="OnCancelClick"/>
+        </StackPanel>
+    </Grid>
+</Window>
