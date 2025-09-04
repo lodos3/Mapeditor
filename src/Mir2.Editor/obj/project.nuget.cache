@@ -1,0 +1,70 @@
+{
+  "version": 2,
+  "dgSpecHash": "7j1IyL83g2TEJmxlKnsBX7gXPGEkpGSdd3LUewr7EcnRdBtK3X795V4XQwmM4w4dIi0XPngqMroNe3BsYI8PUA==",
+  "success": false,
+  "projectFilePath": "/home/runner/work/Mapeditor/Mapeditor/src/Mir2.Editor/Mir2.Editor.csproj",
+  "expectedPackageFiles": [
+    "/home/runner/.nuget/packages/microsoft.extensions.configuration/8.0.0/microsoft.extensions.configuration.8.0.0.nupkg.sha512",
+    "/home/runner/.nuget/packages/microsoft.extensions.configuration.abstractions/8.0.0/microsoft.extensions.configuration.abstractions.8.0.0.nupkg.sha512",
+    "/home/runner/.nuget/packages/microsoft.extensions.configuration.fileextensions/8.0.0/microsoft.extensions.configuration.fileextensions.8.0.0.nupkg.sha512",
+    "/home/runner/.nuget/packages/microsoft.extensions.configuration.json/8.0.0/microsoft.extensions.configuration.json.8.0.0.nupkg.sha512",
+    "/home/runner/.nuget/packages/microsoft.extensions.dependencyinjection/8.0.0/microsoft.extensions.dependencyinjection.8.0.0.nupkg.sha512",
+    "/home/runner/.nuget/packages/microsoft.extensions.dependencyinjection.abstractions/8.0.0/microsoft.extensions.dependencyinjection.abstractions.8.0.0.nupkg.sha512",
+    "/home/runner/.nuget/packages/microsoft.extensions.fileproviders.abstractions/8.0.0/microsoft.extensions.fileproviders.abstractions.8.0.0.nupkg.sha512",
+    "/home/runner/.nuget/packages/microsoft.extensions.fileproviders.physical/8.0.0/microsoft.extensions.fileproviders.physical.8.0.0.nupkg.sha512",
+    "/home/runner/.nuget/packages/microsoft.extensions.filesystemglobbing/8.0.0/microsoft.extensions.filesystemglobbing.8.0.0.nupkg.sha512",
+    "/home/runner/.nuget/packages/microsoft.extensions.logging/8.0.0/microsoft.extensions.logging.8.0.0.nupkg.sha512",
+    "/home/runner/.nuget/packages/microsoft.extensions.logging.abstractions/8.0.0/microsoft.extensions.logging.abstractions.8.0.0.nupkg.sha512",
+    "/home/runner/.nuget/packages/microsoft.extensions.options/8.0.0/microsoft.extensions.options.8.0.0.nupkg.sha512",
+    "/home/runner/.nuget/packages/microsoft.extensions.primitives/8.0.0/microsoft.extensions.primitives.8.0.0.nupkg.sha512",
+    "/home/runner/.nuget/packages/newtonsoft.json/13.0.3/newtonsoft.json.13.0.3.nupkg.sha512",
+    "/home/runner/.nuget/packages/sharpgen.runtime/2.1.2-beta/sharpgen.runtime.2.1.2-beta.nupkg.sha512",
+    "/home/runner/.nuget/packages/sharpgen.runtime.com/2.1.2-beta/sharpgen.runtime.com.2.1.2-beta.nupkg.sha512",
+    "/home/runner/.nuget/packages/system.text.encodings.web/8.0.0/system.text.encodings.web.8.0.0.nupkg.sha512",
+    "/home/runner/.nuget/packages/system.text.json/8.0.0/system.text.json.8.0.0.nupkg.sha512",
+    "/home/runner/.nuget/packages/vortice.direct3d11/3.5.0/vortice.direct3d11.3.5.0.nupkg.sha512",
+    "/home/runner/.nuget/packages/vortice.directx/3.5.0/vortice.directx.3.5.0.nupkg.sha512",
+    "/home/runner/.nuget/packages/vortice.dxgi/3.5.0/vortice.dxgi.3.5.0.nupkg.sha512",
+    "/home/runner/.nuget/packages/vortice.mathematics/1.4.25/vortice.mathematics.1.4.25.nupkg.sha512"
+  ],
+  "logs": [
+    {
+      "code": "NU1603",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Mir2.Render depends on Vortice.Direct3D11 (>= 3.4.0) but Vortice.Direct3D11 3.4.0 was not found. An approximate best match of Vortice.Direct3D11 3.5.0 was resolved.",
+      "libraryId": "Vortice.Direct3D11",
+      "targetGraphs": [
+        "net8.0-windows7.0"
+      ]
+    },
+    {
+      "code": "NU1603",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Mir2.Render depends on Vortice.DXGI (>= 3.4.0) but Vortice.DXGI 3.4.0 was not found. An approximate best match of Vortice.DXGI 3.5.0 was resolved.",
+      "libraryId": "Vortice.DXGI",
+      "targetGraphs": [
+        "net8.0-windows7.0"
+      ]
+    },
+    {
+      "code": "NU1101",
+      "level": "Error",
+      "message": "Unable to find package Vortice.Windows. No packages exist with this id in source(s): nuget.org",
+      "libraryId": "Vortice.Windows",
+      "targetGraphs": [
+        "net8.0-windows7.0"
+      ]
+    },
+    {
+      "code": "NU1605",
+      "level": "Error",
+      "message": "Warning As Error: Detected package downgrade: Vortice.Mathematics from 1.7.8 to 1.4.25. Reference the package directly from the project to select a different version. \n Mir2.Editor -> Mir2.Render -> Vortice.DXGI 3.5.0 -> Vortice.DirectX 3.5.0 -> Vortice.Mathematics (>= 1.7.8) \n Mir2.Editor -> Mir2.Render -> Vortice.Mathematics (>= 1.4.25)",
+      "libraryId": "Vortice.Mathematics",
+      "targetGraphs": [
+        "net8.0-windows7.0"
+      ]
+    }
+  ]
+}
