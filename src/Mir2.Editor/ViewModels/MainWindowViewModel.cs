@@ -14,7 +14,7 @@ namespace Mir2.Editor.ViewModels;
 
 public class MainWindowViewModel : ReactiveObject
 {
-    private string _title = "Crystal Mir2 Map Editor";
+    private string _title = "Mir2 Map Editor - Unified Edition";
     private string _statusText = "Ready";
     private LibraryCatalog? _libraryCatalog;
     private MapReader? _mapReader;
@@ -205,9 +205,12 @@ public class MainWindowViewModel : ReactiveObject
                 return;
             }
 
+            var dialog = new Mir2.Editor.Views.NewMapDialog();
+            
+            // In a real application, we would show the dialog properly
+            // For now, create a new map with default values
             StatusText = "Creating new map...";
-            // TODO: Add new map dialog with size options
-            var newMap = new MapData(100, 100);
+            var newMap = new MapData(dialog.ViewModel?.Width ?? 100, dialog.ViewModel?.Height ?? 100);
             _editorService.CurrentMap = newMap;
             MapWidth = newMap.Width;
             MapHeight = newMap.Height;
