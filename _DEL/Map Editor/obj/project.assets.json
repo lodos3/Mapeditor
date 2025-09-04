@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/home/runner/work/Mapeditor/Mapeditor/Map Editor/Map Editor.csproj",
+      "projectUniqueName": "/home/runner/work/Mapeditor/Mapeditor/_DEL/Map Editor/Map Editor.csproj",
       "projectName": "Map Editor",
-      "projectPath": "/home/runner/work/Mapeditor/Mapeditor/Map Editor/Map Editor.csproj",
+      "projectPath": "/home/runner/work/Mapeditor/Mapeditor/_DEL/Map Editor/Map Editor.csproj",
       "packagesPath": "/home/runner/.nuget/packages/",
-      "outputPath": "/home/runner/work/Mapeditor/Mapeditor/Map Editor/obj/",
+      "outputPath": "/home/runner/work/Mapeditor/Mapeditor/_DEL/Map Editor/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/home/runner/.nuget/NuGet/NuGet.Config"
