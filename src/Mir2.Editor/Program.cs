@@ -9,6 +9,7 @@ using System;
 using System.Threading.Tasks;
 using Mir2.Editor.Views;
 using Mir2.Editor.ViewModels;
+using Mir2.Editor.Services;
 
 namespace Mir2.Editor;
 
@@ -41,6 +42,7 @@ class Program
                     services.AddSingleton<LibraryCatalog>();
                     services.AddTransient<MapReader>();
                     services.AddTransient<MapWriter>();
+                    services.AddSingleton<EditorService>();
                     services.AddTransient<MainWindowViewModel>();
                 })
                 .Build();

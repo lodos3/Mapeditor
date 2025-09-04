@@ -43,4 +43,20 @@ public partial class MainWindow : Window
             vm.NewMapCommand.Execute().Subscribe();
         }
     }
+
+    private void OnUndoClick(object? sender, RoutedEventArgs e)
+    {
+        if (DataContext is MainWindowViewModel vm)
+        {
+            vm.UndoCommand.Execute().Subscribe();
+        }
+    }
+
+    private void OnRedoClick(object? sender, RoutedEventArgs e)
+    {
+        if (DataContext is MainWindowViewModel vm)
+        {
+            vm.RedoCommand.Execute().Subscribe();
+        }
+    }
 }

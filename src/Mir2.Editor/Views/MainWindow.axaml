@@ -28,8 +28,8 @@
                 <MenuItem Header="E_xit"/>
             </MenuItem>
             <MenuItem Header="_Edit">
-                <MenuItem Header="_Undo"/>
-                <MenuItem Header="_Redo"/>
+                <MenuItem Header="_Undo" Click="OnUndoClick" IsEnabled="{Binding CanUndo}"/>
+                <MenuItem Header="_Redo" Click="OnRedoClick" IsEnabled="{Binding CanRedo}"/>
                 <Separator/>
                 <MenuItem Header="_Copy"/>
                 <MenuItem Header="_Paste"/>
@@ -101,6 +101,13 @@
                         <Button Content="+" Margin="2"/>
                         <Button Content="-" Margin="2"/>
                         <Button Content="Reset" Margin="2"/>
+                    </StackPanel>
+                    
+                    <!-- Map Info Overlay -->
+                    <StackPanel VerticalAlignment="Top" HorizontalAlignment="Left" 
+                               Margin="10" Background="White" Opacity="0.9">
+                        <TextBlock Text="{Binding MapWidth, StringFormat='Width: {0}'}" Margin="5"/>
+                        <TextBlock Text="{Binding MapHeight, StringFormat='Height: {0}'}" Margin="5"/>
                     </StackPanel>
                 </Grid>
             </Border>
