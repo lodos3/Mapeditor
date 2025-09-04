@@ -1,0 +1,10 @@
+{
+  "LibraryPaths": {
+    "WemadeMir2": ".\\Data\\Map\\WemadeMir2\\",
+    "ShandaMir2": ".\\Data\\Map\\ShandaMir2\\",
+    "WemadeMir3": ".\\Data\\Map\\WemadeMir3\\",
+    "ShandaMir3": ".\\Data\\Map\\ShandaMir3\\"
+  },
+  "ObjectsPath": ".\\Data\\Objects\\",
+  "AutoScanOnStartup": true
+}

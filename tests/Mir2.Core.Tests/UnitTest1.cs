@@ -1,5 +1,6 @@
 using Mir2.Core.IO;
 using Mir2.Core.Models;
+using Mir2.Core.Services;
 
 namespace Mir2.Core.Tests;
 
@@ -272,5 +273,152 @@ public class MapReaderWriterTests
         // Header (8 bytes) + cells (100 * 200 * 26 bytes per cell)
         var expected = 8 + (100 * 200 * 26);
         Assert.Equal(expected, size);
+    }
+}
+
+public class LibraryCatalogTests
+{
+    [Fact]
+    public void LibraryCatalog_DefaultConstructor_InitializesConfig()
+    {
+        // Arrange & Act
+        var catalog = new LibraryCatalog();
+
+        // Assert
+        Assert.NotNull(catalog.Config);
+        Assert.NotEmpty(catalog.Config.LibraryPaths);
+        Assert.Equal(4, catalog.Config.LibraryPaths.Count);
+        Assert.True(catalog.Config.AutoScanOnStartup);
+    }
+
+    [Fact]
+    public void LibraryCatalog_CustomConfig_UsesProvidedConfig()
+    {
+        // Arrange
+        var customConfig = new LibraryConfig
+        {
+            AutoScanOnStartup = false,
+            ObjectsPath = @"C:\TestObjects\"
+        };
+
+        // Act
+        var catalog = new LibraryCatalog(customConfig);
+
+        // Assert
+        Assert.Same(customConfig, catalog.Config);
+        Assert.False(catalog.Config.AutoScanOnStartup);
+        Assert.Equal(@"C:\TestObjects\", catalog.Config.ObjectsPath);
+    }
+
+    [Fact]
+    public void LibraryItem_ToString_ReturnsName()
+    {
+        // Arrange
+        var item = new LibraryItem { Name = "TestLibrary", Index = 42 };
+
+        // Act & Assert
+        Assert.Equal("TestLibrary", item.ToString());
+    }
+
+    [Fact]
+    public async Task LibraryCatalog_ScanLibrariesAsync_CompletesWithoutException()
+    {
+        // Arrange
+        var catalog = new LibraryCatalog();
+
+        // Act & Assert - Should complete without throwing
+        await catalog.ScanLibrariesAsync();
+        
+        // Libraries dictionary should be initialized (empty is fine since no actual lib files exist)
+        Assert.NotNull(catalog.Libraries);
+    }
+
+    [Fact]
+    public void LibraryCatalog_GetLibrary_NonExistentIndex_ReturnsNull()
+    {
+        // Arrange
+        var catalog = new LibraryCatalog();
+
+        // Act
+        var library = catalog.GetLibrary(999);
+
+        // Assert
+        Assert.Null(library);
+    }
+
+    [Fact]
+    public void LibraryCatalog_GetLibrariesByType_ReturnsFilteredResults()
+    {
+        // Arrange
+        var catalog = new LibraryCatalog();
+
+        // Act
+        var wemadeMir2Libraries = catalog.GetLibrariesByType(LibraryType.WemadeMir2);
+
+        // Assert
+        Assert.NotNull(wemadeMir2Libraries);
+        // Should be empty since no actual library files exist
+        Assert.Empty(wemadeMir2Libraries);
+    }
+
+    [Theory]
+    [InlineData(LibraryType.WemadeMir2)]
+    [InlineData(LibraryType.ShandaMir2)]
+    [InlineData(LibraryType.WemadeMir3)]
+    [InlineData(LibraryType.ShandaMir3)]
+    public void LibraryConfig_DefaultPaths_ContainsAllTypes(LibraryType type)
+    {
+        // Arrange
+        var config = new LibraryConfig();
+
+        // Act & Assert
+        Assert.True(config.LibraryPaths.ContainsKey(type));
+        Assert.NotEmpty(config.LibraryPaths[type]);
+    }
+
+    [Fact]
+    public async Task LibraryCatalog_SaveAndLoadConfig_RoundTrip()
+    {
+        // Arrange
+        var originalConfig = new LibraryConfig
+        {
+            AutoScanOnStartup = false,
+            ObjectsPath = @"C:\TestPath\"
+        };
+        originalConfig.LibraryPaths[LibraryType.WemadeMir2] = @"C:\CustomMir2\";
+
+        var catalog = new LibraryCatalog(originalConfig);
+        var tempFile = Path.GetTempFileName();
+
+        try
+        {
+            // Act
+            await catalog.SaveConfigAsync(tempFile);
+            var loadedConfig = await LibraryCatalog.LoadConfigAsync(tempFile);
+
+            // Assert
+            Assert.Equal(originalConfig.AutoScanOnStartup, loadedConfig.AutoScanOnStartup);
+            Assert.Equal(originalConfig.ObjectsPath, loadedConfig.ObjectsPath);
+            Assert.Equal(originalConfig.LibraryPaths[LibraryType.WemadeMir2], loadedConfig.LibraryPaths[LibraryType.WemadeMir2]);
+        }
+        finally
+        {
+            File.Delete(tempFile);
+        }
+    }
+
+    [Fact]
+    public async Task LibraryCatalog_LoadConfig_NonExistentFile_ReturnsDefaultConfig()
+    {
+        // Arrange
+        var nonExistentFile = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString() + ".json");
+
+        // Act
+        var config = await LibraryCatalog.LoadConfigAsync(nonExistentFile);
+
+        // Assert
+        Assert.NotNull(config);
+        Assert.True(config.AutoScanOnStartup);
+        Assert.Equal(@".\Data\Objects\", config.ObjectsPath);
     }
 }
