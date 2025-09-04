@@ -432,6 +432,147 @@ public class MapReaderWriterTests
         
         Assert.Equal((int)expected, actualInt32);
     }
+
+    [Fact]
+    public void ObjectSerializer_RoundTrip_PreservesData()
+    {
+        // Arrange
+        var originalData = new CellInfoData[]
+        {
+            new CellInfoData
+            {
+                X = 5,
+                Y = 10,
+                CellInfo = new CellInfo
+                {
+                    BackIndex = 1,
+                    BackImage = 12345,
+                    MiddleIndex = 2,
+                    MiddleImage = 678,
+                    FrontIndex = 3,
+                    FrontImage = 901,
+                    DoorIndex = 4,
+                    DoorOffset = 5,
+                    FrontAnimationFrame = 6,
+                    FrontAnimationTick = 7,
+                    MiddleAnimationFrame = 8,
+                    MiddleAnimationTick = 9,
+                    TileAnimationImage = 1234,
+                    TileAnimationOffset = 5678,
+                    TileAnimationFrames = 10,
+                    Light = 105 // Fishing zone
+                }
+            },
+            new CellInfoData
+            {
+                X = -2,
+                Y = 3,
+                CellInfo = new CellInfo
+                {
+                    BackIndex = 11,
+                    BackImage = 54321,
+                    Light = 50 // Normal light
+                }
+            }
+        };
+
+        // Act
+        var serializer = new ObjectSerializer();
+        var bytes = serializer.SerializeToBytes(originalData);
+        var loadedData = serializer.DeserializeFromBytes(bytes);
+
+        // Assert
+        Assert.Equal(originalData.Length, loadedData.Length);
+
+        // Check first object
+        var original1 = originalData[0];
+        var loaded1 = loadedData[0];
+        
+        Assert.Equal(original1.X, loaded1.X);
+        Assert.Equal(original1.Y, loaded1.Y);
+        Assert.Equal(original1.CellInfo.BackIndex, loaded1.CellInfo.BackIndex);
+        Assert.Equal(original1.CellInfo.BackImage, loaded1.CellInfo.BackImage);
+        Assert.Equal(original1.CellInfo.MiddleIndex, loaded1.CellInfo.MiddleIndex);
+        Assert.Equal(original1.CellInfo.MiddleImage, loaded1.CellInfo.MiddleImage);
+        Assert.Equal(original1.CellInfo.FrontIndex, loaded1.CellInfo.FrontIndex);
+        Assert.Equal(original1.CellInfo.FrontImage, loaded1.CellInfo.FrontImage);
+        Assert.Equal(original1.CellInfo.DoorIndex, loaded1.CellInfo.DoorIndex);
+        Assert.Equal(original1.CellInfo.DoorOffset, loaded1.CellInfo.DoorOffset);
+        Assert.Equal(original1.CellInfo.FrontAnimationFrame, loaded1.CellInfo.FrontAnimationFrame);
+        Assert.Equal(original1.CellInfo.FrontAnimationTick, loaded1.CellInfo.FrontAnimationTick);
+        Assert.Equal(original1.CellInfo.MiddleAnimationFrame, loaded1.CellInfo.MiddleAnimationFrame);
+        Assert.Equal(original1.CellInfo.MiddleAnimationTick, loaded1.CellInfo.MiddleAnimationTick);
+        Assert.Equal(original1.CellInfo.TileAnimationImage, loaded1.CellInfo.TileAnimationImage);
+        Assert.Equal(original1.CellInfo.TileAnimationOffset, loaded1.CellInfo.TileAnimationOffset);
+        Assert.Equal(original1.CellInfo.TileAnimationFrames, loaded1.CellInfo.TileAnimationFrames);
+        Assert.Equal(original1.CellInfo.Light, loaded1.CellInfo.Light);
+        Assert.Equal(original1.CellInfo.FishingCell, loaded1.CellInfo.FishingCell); // Should be true
+
+        // Check second object
+        var original2 = originalData[1];
+        var loaded2 = loadedData[1];
+        
+        Assert.Equal(original2.X, loaded2.X);
+        Assert.Equal(original2.Y, loaded2.Y);
+        Assert.Equal(original2.CellInfo.BackIndex, loaded2.CellInfo.BackIndex);
+        Assert.Equal(original2.CellInfo.BackImage, loaded2.CellInfo.BackImage);
+        Assert.Equal(original2.CellInfo.Light, loaded2.CellInfo.Light);
+        Assert.Equal(original2.CellInfo.FishingCell, loaded2.CellInfo.FishingCell); // Should be false
+    }
+
+    [Fact]
+    public async Task ObjectSerializer_FileOperations_WorkCorrectly()
+    {
+        // Arrange
+        var testData = new CellInfoData[]
+        {
+            new CellInfoData
+            {
+                X = 1,
+                Y = 2,
+                CellInfo = new CellInfo { Light = 110, BackImage = 999 }
+            }
+        };
+
+        var tempFile = Path.GetTempFileName();
+        var serializer = new ObjectSerializer();
+
+        try
+        {
+            // Act - Save to file
+            await serializer.SaveAsync(testData, tempFile);
+            
+            // Assert file exists and has correct size
+            Assert.True(File.Exists(tempFile));
+            var fileSize = new FileInfo(tempFile).Length;
+            var expectedSize = ObjectSerializer.CalculateFileSize(1);
+            Assert.Equal(expectedSize, fileSize);
+
+            // Act - Load from file
+            var loadedData = await serializer.LoadAsync(tempFile);
+
+            // Assert data integrity
+            Assert.Single(loadedData);
+            Assert.Equal(testData[0].X, loadedData[0].X);
+            Assert.Equal(testData[0].Y, loadedData[0].Y);
+            Assert.Equal(testData[0].CellInfo.Light, loadedData[0].CellInfo.Light);
+            Assert.Equal(testData[0].CellInfo.BackImage, loadedData[0].CellInfo.BackImage);
+        }
+        finally
+        {
+            if (File.Exists(tempFile))
+                File.Delete(tempFile);
+        }
+    }
+
+    [Fact]
+    public void ObjectSerializer_CalculateFileSize_ReturnsCorrectSize()
+    {
+        // Each object is 34 bytes + 4 bytes for count
+        Assert.Equal(4, ObjectSerializer.CalculateFileSize(0)); // Just count
+        Assert.Equal(4 + 34, ObjectSerializer.CalculateFileSize(1)); // Count + 1 object
+        Assert.Equal(4 + (34 * 5), ObjectSerializer.CalculateFileSize(5)); // Count + 5 objects
+    }
 }
 
 public class LibraryCatalogTests
