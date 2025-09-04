@@ -145,9 +145,8 @@ public class MapWriter
         using var memoryStream = new MemoryStream();
         using var writer = new BinaryWriter(memoryStream);
 
-        // Generate XOR key - using same method as legacy
-        var random = new Random();
-        var xor = (short)random.Next(1, 0x7FFF);
+        // Use fixed XOR key for debugging - will use random later
+        var xor = (short)0x1234; // Fixed for debugging
 
         // Write header - Legacy: "Map 2010 Ver 1.0" - Detection bytes[0] == 0x10 && bytes[2] == 0x61 && bytes[7] == 0x31 && bytes[14] == 0x31
         writer.Write((byte)0x10);        // bytes[0]
@@ -182,7 +181,8 @@ public class MapWriter
             {
                 var cell = mapData.Cells[x, y] ?? new CellInfo();
                 
-                writer.Write((int)(cell.BackImage ^ 0xAA38AA38)); // Legacy: MapCode.cs line 204
+                uint xorResult = (uint)cell.BackImage ^ 0xAA38AA38u;
+                writer.Write((int)xorResult); // Explicit int write - Legacy: MapCode.cs line 204
                 writer.Write((short)(cell.MiddleImage ^ xor));     // Legacy: MapCode.cs line 206
                 writer.Write((short)(cell.FrontImage ^ xor));      // Legacy: MapCode.cs line 207
                 writer.Write(cell.DoorIndex);                      // Legacy: MapCode.cs line 208

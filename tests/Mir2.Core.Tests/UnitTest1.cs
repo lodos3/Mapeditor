@@ -412,26 +412,25 @@ public class MapReaderWriterTests
     }
 
     [Fact]
-    public void Debug_Type1_WriteRead()
+    public void Debug_Writer_XOR_Issue()
     {
-        // Arrange - simple map
-        var originalMap = new MapData(2, 2, MapFormatType.Type1);
-        originalMap.Cells[0, 0] = new CellInfo { BackImage = 1000, Light = 50 };
-
-        // Act
+        // Test the writer directly
+        var map = new MapData(1, 1, MapFormatType.Type1);
+        map.Cells[0, 0] = new CellInfo { BackImage = 123456 };
+        
         var writer = new MapWriter();
-        var bytes = writer.WriteToBytes(originalMap);
+        var bytes = writer.WriteToBytes(map);
         
-        // Debug
-        System.Console.WriteLine($"Generated {bytes.Length} bytes for 2x2 Type1 map");
-        System.Console.WriteLine($"First 20 bytes: {string.Join(", ", bytes.Take(20).Select(b => $"0x{b:X2}"))}");
+        var backImageBytes = bytes.Skip(54).Take(4).ToArray();
+        var actualInt32 = BitConverter.ToInt32(backImageBytes, 0);
         
-        var reader = new MapReader();
-        var loadedMap = reader.ReadFromBytes(bytes);
-
-        // Assert  
-        Assert.Equal(originalMap.Width, loadedMap.Width);
-        Assert.Equal(originalMap.Height, loadedMap.Height);
+        System.Console.WriteLine($"BackImage bytes: [{string.Join(", ", backImageBytes.Select(b => $"0x{b:X2}"))}]");
+        System.Console.WriteLine($"Actual int32: 0x{(uint)actualInt32:X8}");
+        
+        uint expected = (uint)123456 ^ 0xAA38AA38u;
+        System.Console.WriteLine($"Expected: 0x{expected:X8}");
+        
+        Assert.Equal((int)expected, actualInt32);
     }
 }
 
