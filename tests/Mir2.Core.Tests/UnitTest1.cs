@@ -280,6 +280,159 @@ public class MapReaderWriterTests
         var expected = 8 + (100 * 200 * 26);
         Assert.Equal(expected, size);
     }
+
+    [Fact]
+    public void MapReaderWriter_RoundTrip_Type0_PreservesData()
+    {
+        // Arrange
+        var originalMap = new MapData(5, 5, MapFormatType.Type0);
+        originalMap.Cells[2, 2] = new CellInfo
+        {
+            BackImage = 100,
+            MiddleImage = 200,
+            FrontImage = 300,
+            FrontIndex = 5,
+            DoorIndex = 1,
+            DoorOffset = 2,
+            FrontAnimationFrame = 3,
+            FrontAnimationTick = 4,
+            Light = 110
+        };
+
+        // Act
+        var writer = new MapWriter();
+        var bytes = writer.WriteToBytes(originalMap);
+        
+        var reader = new MapReader();
+        var loadedMap = reader.ReadFromBytes(bytes);
+
+        // Assert
+        var originalCell = originalMap.Cells[2, 2];
+        var loadedCell = loadedMap.Cells[2, 2];
+
+        Assert.Equal(originalCell.BackImage, loadedCell.BackImage);
+        Assert.Equal(originalCell.MiddleImage, loadedCell.MiddleImage);
+        Assert.Equal(originalCell.FrontImage, loadedCell.FrontImage);
+        Assert.Equal(originalCell.FrontIndex, loadedCell.FrontIndex);
+        Assert.Equal(originalCell.Light, loadedCell.Light);
+        Assert.Equal(originalCell.FishingCell, loadedCell.FishingCell);
+    }
+
+    [Fact]
+    public void MapReaderWriter_RoundTrip_Type1_PreservesData()
+    {
+        // Arrange
+        var originalMap = new MapData(3, 3, MapFormatType.Type1);
+        originalMap.Cells[1, 1] = new CellInfo
+        {
+            BackImage = 123456,
+            MiddleImage = 789,
+            FrontImage = 321,
+            FrontIndex = 90, // Should be converted to 102 and back
+            Light = 105,
+            Unknown = 42
+        };
+
+        // Act
+        var writer = new MapWriter();
+        var bytes = writer.WriteToBytes(originalMap);
+        
+        var reader = new MapReader();
+        var loadedMap = reader.ReadFromBytes(bytes);
+
+        // Assert
+        var originalCell = originalMap.Cells[1, 1];
+        var loadedCell = loadedMap.Cells[1, 1];
+
+        Assert.Equal(originalCell.BackImage, loadedCell.BackImage);
+        Assert.Equal(originalCell.MiddleImage, loadedCell.MiddleImage);
+        Assert.Equal(originalCell.FrontImage, loadedCell.FrontImage);
+        Assert.Equal(originalCell.FrontIndex, loadedCell.FrontIndex);
+        Assert.Equal(originalCell.Light, loadedCell.Light);
+        Assert.Equal(originalCell.Unknown, loadedCell.Unknown);
+        Assert.Equal(originalCell.FishingCell, loadedCell.FishingCell);
+    }
+
+    [Fact]
+    public void MapReaderWriter_RoundTrip_Type4_PreservesData()
+    {
+        // Arrange  
+        var originalMap = new MapData(4, 4, MapFormatType.Type4);
+        originalMap.Cells[2, 1] = new CellInfo
+        {
+            BackImage = 0x18000, // Test bit masking
+            MiddleImage = 456,
+            FrontImage = 789,
+            FrontIndex = 7,
+            Light = 115
+        };
+
+        // Act
+        var writer = new MapWriter();
+        var bytes = writer.WriteToBytes(originalMap);
+        
+        var reader = new MapReader();
+        var loadedMap = reader.ReadFromBytes(bytes);
+
+        // Assert
+        var originalCell = originalMap.Cells[2, 1];
+        var loadedCell = loadedMap.Cells[2, 1];
+
+        // BackImage should be preserved with bit transformation
+        Assert.Equal(originalCell.BackImage, loadedCell.BackImage);
+        Assert.Equal(originalCell.MiddleImage, loadedCell.MiddleImage);
+        Assert.Equal(originalCell.FrontImage, loadedCell.FrontImage);
+        Assert.Equal(originalCell.FrontIndex, loadedCell.FrontIndex);
+        Assert.Equal(originalCell.Light, loadedCell.Light);
+        Assert.Equal(originalCell.FishingCell, loadedCell.FishingCell);
+    }
+
+    [Fact]
+    public void Debug_Type0_WriteRead()
+    {
+        // Arrange - very simple map to debug
+        var originalMap = new MapData(2, 2, MapFormatType.Type0);
+        originalMap.Cells[0, 0] = new CellInfo { Light = 50 };
+        originalMap.Cells[1, 1] = new CellInfo { Light = 100 };
+
+        // Act
+        var writer = new MapWriter();
+        var bytes = writer.WriteToBytes(originalMap);
+        
+        // Debug - check the file size and initial bytes
+        System.Console.WriteLine($"Generated {bytes.Length} bytes for 2x2 Type0 map");
+        System.Console.WriteLine($"First 10 bytes: {string.Join(", ", bytes.Take(10).Select(b => $"0x{b:X2}"))}");
+        
+        var reader = new MapReader();
+        var loadedMap = reader.ReadFromBytes(bytes);
+
+        // Assert
+        Assert.Equal(originalMap.Width, loadedMap.Width);
+        Assert.Equal(originalMap.Height, loadedMap.Height);
+    }
+
+    [Fact]
+    public void Debug_Type1_WriteRead()
+    {
+        // Arrange - simple map
+        var originalMap = new MapData(2, 2, MapFormatType.Type1);
+        originalMap.Cells[0, 0] = new CellInfo { BackImage = 1000, Light = 50 };
+
+        // Act
+        var writer = new MapWriter();
+        var bytes = writer.WriteToBytes(originalMap);
+        
+        // Debug
+        System.Console.WriteLine($"Generated {bytes.Length} bytes for 2x2 Type1 map");
+        System.Console.WriteLine($"First 20 bytes: {string.Join(", ", bytes.Take(20).Select(b => $"0x{b:X2}"))}");
+        
+        var reader = new MapReader();
+        var loadedMap = reader.ReadFromBytes(bytes);
+
+        // Assert  
+        Assert.Equal(originalMap.Width, loadedMap.Width);
+        Assert.Equal(originalMap.Height, loadedMap.Height);
+    }
 }
 
 public class LibraryCatalogTests

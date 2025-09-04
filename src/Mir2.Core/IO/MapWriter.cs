@@ -92,7 +92,7 @@ public class MapWriter
 
     /// <summary>
     /// Writes Type0 (Default old school format)
-    /// Legacy reference: MapCode.cs LoadMapType0() for field order
+    /// Legacy reference: MapCode.cs LoadMapType0() for field order - 12 bytes per cell
     /// </summary>
     private byte[] WriteType0(MapData mapData)
     {
@@ -106,7 +106,7 @@ public class MapWriter
         // Write 48 bytes of padding to reach offset 52
         writer.Write(new byte[48]);
 
-        // Write cell data - Legacy: MapCode.cs line 155-166
+        // Write cell data - Legacy: MapCode.cs line 155-166 (12 bytes per cell)
         for (int x = 0; x < mapData.Width; x++)
         {
             for (int y = 0; y < mapData.Height; y++)
@@ -127,6 +127,7 @@ public class MapWriter
                 writer.Write(cell.FrontAnimationTick);  // Legacy: MapCode.cs line 164
                 writer.Write((byte)Math.Max(0, cell.FrontIndex - 2)); // Legacy: MapCode.cs line 165
                 writer.Write(cell.Light);               // Legacy: MapCode.cs line 166
+                // Total: 12 bytes per cell
             }
         }
 
@@ -148,10 +149,25 @@ public class MapWriter
         var random = new Random();
         var xor = (short)random.Next(1, 0x7FFF);
 
-        // Write header - Legacy: "Map 2010 Ver 1.0"
-        writer.Write((byte)0x10);
-        writer.Write("ap 2010 Ver 1.0".ToCharArray());
-        writer.Write(new byte[5]); // Padding
+        // Write header - Legacy: "Map 2010 Ver 1.0" - Detection bytes[0] == 0x10 && bytes[2] == 0x61 && bytes[7] == 0x31 && bytes[14] == 0x31
+        writer.Write((byte)0x10);        // bytes[0]
+        writer.Write((byte)'M');         // bytes[1]
+        writer.Write((byte)0x61);        // bytes[2] 'a'
+        writer.Write((byte)'p');         // bytes[3]
+        writer.Write((byte)' ');         // bytes[4]
+        writer.Write((byte)'2');         // bytes[5]
+        writer.Write((byte)'0');         // bytes[6]
+        writer.Write((byte)0x31);        // bytes[7] '1'
+        writer.Write((byte)'0');         // bytes[8]
+        writer.Write((byte)' ');         // bytes[9]
+        writer.Write((byte)'V');         // bytes[10]
+        writer.Write((byte)'e');         // bytes[11]
+        writer.Write((byte)'r');         // bytes[12]
+        writer.Write((byte)' ');         // bytes[13]
+        writer.Write((byte)0x31);        // bytes[14] '1'
+        writer.Write((byte)'.');         // bytes[15]
+        writer.Write((byte)'0');         // bytes[16]
+        writer.Write(new byte[4]);       // Padding to offset 21
 
         writer.Write((short)(mapData.Width ^ xor));  // Legacy: MapCode.cs line 187
         writer.Write(xor);                           // Legacy: MapCode.cs line 189
@@ -202,9 +218,24 @@ public class MapWriter
         var random = new Random();
         var xor = (short)random.Next(1, 0x7FFF);
 
-        // Write header - Legacy: "Mir2 AntiHack"
-        writer.Write("Mir2 AntiHack".ToCharArray());
-        writer.Write(new byte[18]); // Padding
+        // Write header - Legacy: "Mir2 AntiHack" - Detection bytes[0] == 0x15 && bytes[4] == 0x32 && bytes[6] == 0x41 && bytes[19] == 0x31
+        writer.Write((byte)0x15);        // bytes[0]
+        writer.Write((byte)'M');         // bytes[1]
+        writer.Write((byte)'i');         // bytes[2]
+        writer.Write((byte)'r');         // bytes[3]
+        writer.Write((byte)0x32);        // bytes[4] '2'
+        writer.Write((byte)' ');         // bytes[5]
+        writer.Write((byte)0x41);        // bytes[6] 'A'
+        writer.Write((byte)'n');         // bytes[7]
+        writer.Write((byte)'t');         // bytes[8]
+        writer.Write((byte)'i');         // bytes[9]
+        writer.Write((byte)'H');         // bytes[10]
+        writer.Write((byte)'a');         // bytes[11]
+        writer.Write((byte)'c');         // bytes[12]
+        writer.Write((byte)'k');         // bytes[13]
+        writer.Write(new byte[17]);      // Padding  
+        writer.Write((byte)0x31);        // bytes[19] - This seems to be part of the detection
+        writer.Write(new byte[11]);      // More padding to offset 31
 
         writer.Write((short)(mapData.Width ^ xor));  // Legacy: MapCode.cs line 327
         writer.Write(xor);                           // Legacy: MapCode.cs line 329

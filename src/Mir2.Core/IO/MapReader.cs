@@ -179,18 +179,19 @@ public class MapReader
 
     /// <summary>
     /// Loads default old school format (Type0)
+    /// Legacy reference: MapCode.cs LoadMapType0() for exact field sequence
     /// </summary>
     private static MapData LoadMapType0(byte[] bytes)
     {
         try
         {
             int offset = 0;
-            int width = BitConverter.ToInt16(bytes, offset);
+            int width = BitConverter.ToInt16(bytes, offset); // Legacy: MapCode.cs line 144
             offset += 2;
-            int height = BitConverter.ToInt16(bytes, offset);
+            int height = BitConverter.ToInt16(bytes, offset); // Legacy: MapCode.cs line 146
             
             var mapData = new MapData(width, height, MapFormatType.Type0);
-            offset = 52;
+            offset = 52; // Legacy: MapCode.cs line 148
 
             for (int x = 0; x < width; x++)
             {
@@ -198,22 +199,26 @@ public class MapReader
                 {
                     var cell = new CellInfo();
                     
-                    cell.BackIndex = BitConverter.ToInt16(bytes, offset);
-                    offset += 2;
-                    cell.BackImage = BitConverter.ToInt16(bytes, offset);
-                    offset += 2;
-                    cell.MiddleIndex = BitConverter.ToInt16(bytes, offset);
-                    offset += 2;
-                    cell.MiddleImage = BitConverter.ToInt16(bytes, offset);
-                    offset += 2;
-                    cell.FrontIndex = BitConverter.ToInt16(bytes, offset);
-                    offset += 2;
-                    cell.FrontImage = BitConverter.ToInt16(bytes, offset);
-                    offset += 2;
+                    // Legacy: MapCode.cs line 153-154 (sets defaults)
+                    cell.BackIndex = 0;
+                    cell.MiddleIndex = 1;
                     
-                    cell.DoorIndex = bytes[offset++];
-                    cell.DoorOffset = bytes[offset++];
-                    cell.Light = bytes[offset++];
+                    cell.BackImage = BitConverter.ToInt16(bytes, offset); // Legacy: MapCode.cs line 155
+                    offset += 2;
+                    cell.MiddleImage = BitConverter.ToInt16(bytes, offset); // Legacy: MapCode.cs line 157
+                    offset += 2;
+                    cell.FrontImage = BitConverter.ToInt16(bytes, offset); // Legacy: MapCode.cs line 159
+                    offset += 2;
+                    cell.DoorIndex = bytes[offset++]; // Legacy: MapCode.cs line 161
+                    cell.DoorOffset = bytes[offset++]; // Legacy: MapCode.cs line 162
+                    cell.FrontAnimationFrame = bytes[offset++]; // Legacy: MapCode.cs line 163
+                    cell.FrontAnimationTick = bytes[offset++]; // Legacy: MapCode.cs line 164
+                    cell.FrontIndex = (short)(bytes[offset++] + 2); // Legacy: MapCode.cs line 165
+                    cell.Light = bytes[offset++]; // Legacy: MapCode.cs line 166
+
+                    // Legacy: MapCode.cs line 167-168 (bit masking)
+                    if ((cell.BackImage & 0x8000) != 0)
+                        cell.BackImage = (cell.BackImage & 0x7FFF) | 0x20000000;
 
                     mapData.Cells[x, y] = cell;
                 }
