@@ -72,4 +72,44 @@ public partial class MainWindow : Window
             vm.RedoCommand.Execute().Subscribe();
         }
     }
+
+    private void OnJumpClick(object? sender, RoutedEventArgs e)
+    {
+        if (DataContext is MainWindowViewModel vm)
+        {
+            vm.ShowJumpDialogCommand.Execute().Subscribe();
+        }
+    }
+
+    private void OnSetAnimationClick(object? sender, RoutedEventArgs e)
+    {
+        if (DataContext is MainWindowViewModel vm)
+        {
+            vm.ShowSetAnimationDialogCommand.Execute().Subscribe();
+        }
+    }
+
+    private void OnSetDoorClick(object? sender, RoutedEventArgs e)
+    {
+        if (DataContext is MainWindowViewModel vm)
+        {
+            vm.ShowSetDoorDialogCommand.Execute().Subscribe();
+        }
+    }
+
+    private void OnSetLightClick(object? sender, RoutedEventArgs e)
+    {
+        if (DataContext is MainWindowViewModel vm)
+        {
+            vm.ShowSetLightDialogCommand.Execute().Subscribe();
+        }
+    }
+
+    private void OnAboutClick(object? sender, RoutedEventArgs e)
+    {
+        if (DataContext is MainWindowViewModel vm)
+        {
+            vm.ShowAboutDialogCommand.Execute().Subscribe();
+        }
+    }
 }
