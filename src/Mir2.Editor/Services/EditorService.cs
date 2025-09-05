@@ -114,6 +114,22 @@ public class EditorService
     }
 
     /// <summary>
+    /// Clears only the undo history
+    /// </summary>
+    public void UndoClear()
+    {
+        _undoStack.Clear();
+    }
+
+    /// <summary>
+    /// Clears only the redo history
+    /// </summary>
+    public void RedoClear()
+    {
+        _redoStack.Clear();
+    }
+
+    /// <summary>
     /// Sets cell data and saves state for undo
     /// </summary>
     /// <param name="x">X coordinate</param>

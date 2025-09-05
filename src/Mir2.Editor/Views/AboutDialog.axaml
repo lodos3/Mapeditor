@@ -1,0 +1,49 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="Mir2.Editor.Views.AboutDialog"
+        Title="About Mir2 Map Editor"
+        Width="400" Height="300"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False">
+
+  <Grid Margin="20">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="*"/>
+      <RowDefinition Height="Auto"/>
+    </Grid.RowDefinitions>
+    
+    <TextBlock Grid.Row="0" Text="Mir2 Map Editor" 
+               FontSize="18" FontWeight="Bold"
+               HorizontalAlignment="Center" Margin="0,0,0,10"/>
+    
+    <TextBlock Grid.Row="1" Text="A modern map editor for Mir2 games"
+               HorizontalAlignment="Center" Margin="0,0,0,15"/>
+    
+    <TextBlock Grid.Row="2" Text="Supported Map Formats:"
+               FontWeight="SemiBold" Margin="0,0,0,5"/>
+    
+    <TextBlock Grid.Row="3" Margin="10,0,0,0">
+      <TextBlock.Text>
+        <x:String>• Type 0: Default old school format
+• Type 1: Wemade's 2010 format
+• Type 2: Shanda's older format  
+• Type 3: Shanda's 2012 format
+• Type 4: Wemade's antihack format
+• Type 5: Wemade Mir3 format
+• Type 6: Shanda Mir3 format
+• Type 7: 3/4 Heroes format
+• Type 100: C# custom format</x:String>
+      </TextBlock.Text>
+    </TextBlock>
+
+    <StackPanel Grid.Row="5" Orientation="Horizontal" 
+                HorizontalAlignment="Center" Margin="0,20,0,0">
+      <Button Name="btnClose" Content="Close" Width="100"
+              Click="btnClose_Click" IsDefault="True"/>
+    </StackPanel>
+  </Grid>
+</Window>

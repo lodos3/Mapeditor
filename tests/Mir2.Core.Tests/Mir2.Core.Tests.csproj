@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Mir2.Core\Mir2.Core.csproj" />
+    <ProjectReference Include="..\..\src\Mir2.Editor\Mir2.Editor.csproj" />
   </ItemGroup>
 
 </Project>

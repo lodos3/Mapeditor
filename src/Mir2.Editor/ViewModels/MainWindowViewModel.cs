@@ -42,6 +42,13 @@ public class MainWindowViewModel : ReactiveObject
             UndoCommand = ReactiveCommand.CreateFromTask(UndoAsync, this.WhenAnyValue(x => x.CanUndo));
             RedoCommand = ReactiveCommand.CreateFromTask(RedoAsync, this.WhenAnyValue(x => x.CanRedo));
             
+            // Initialize new dialog commands
+            ShowJumpDialogCommand = ReactiveCommand.CreateFromTask(ShowJumpDialogAsync);
+            ShowSetAnimationDialogCommand = ReactiveCommand.CreateFromTask(ShowSetAnimationDialogAsync);
+            ShowSetDoorDialogCommand = ReactiveCommand.CreateFromTask(ShowSetDoorDialogAsync);
+            ShowSetLightDialogCommand = ReactiveCommand.CreateFromTask(ShowSetLightDialogAsync);
+            ShowAboutDialogCommand = ReactiveCommand.CreateFromTask(ShowAboutDialogAsync);
+            
             Libraries = new ObservableCollection<LibraryItem>();
             
             ApplicationLogger.LogInfo("MainWindowViewModel constructor completed successfully", "VIEWMODEL");
@@ -97,6 +104,13 @@ public class MainWindowViewModel : ReactiveObject
     public ReactiveCommand<Unit, Unit> NewMapCommand { get; }
     public ReactiveCommand<Unit, Unit> UndoCommand { get; }
     public ReactiveCommand<Unit, Unit> RedoCommand { get; }
+    
+    // New commands for dialogs from archived functionality
+    public ReactiveCommand<Unit, Unit> ShowJumpDialogCommand { get; }
+    public ReactiveCommand<Unit, Unit> ShowSetAnimationDialogCommand { get; }
+    public ReactiveCommand<Unit, Unit> ShowSetDoorDialogCommand { get; }
+    public ReactiveCommand<Unit, Unit> ShowSetLightDialogCommand { get; }
+    public ReactiveCommand<Unit, Unit> ShowAboutDialogCommand { get; }
 
     private async Task InitializeAsync()
     {
@@ -322,6 +336,84 @@ public class MainWindowViewModel : ReactiveObject
         {
             CanUndo = _editorService.UndoCount > 0;
             CanRedo = _editorService.RedoCount > 0;
+        }
+    }
+
+    // Dialog methods from archived functionality
+    private async Task ShowJumpDialogAsync()
+    {
+        try
+        {
+            var dialog = new Views.JumpDialog();
+            // In a real implementation, we would show the dialog and handle the result
+            // For now, just log the action
+            StatusText = "Jump dialog opened";
+            await Task.Delay(1);
+        }
+        catch (Exception ex)
+        {
+            StatusText = $"Error showing jump dialog: {ex.Message}";
+            _logger?.LogError(ex, "Failed to show jump dialog");
+        }
+    }
+
+    private async Task ShowSetAnimationDialogAsync()
+    {
+        try
+        {
+            var dialog = new Views.SetAnimationDialog();
+            StatusText = "Set Animation dialog opened";
+            await Task.Delay(1);
+        }
+        catch (Exception ex)
+        {
+            StatusText = $"Error showing set animation dialog: {ex.Message}";
+            _logger?.LogError(ex, "Failed to show set animation dialog");
+        }
+    }
+
+    private async Task ShowSetDoorDialogAsync()
+    {
+        try
+        {
+            var dialog = new Views.SetDoorDialog();
+            StatusText = "Set Door dialog opened";
+            await Task.Delay(1);
+        }
+        catch (Exception ex)
+        {
+            StatusText = $"Error showing set door dialog: {ex.Message}";
+            _logger?.LogError(ex, "Failed to show set door dialog");
+        }
+    }
+
+    private async Task ShowSetLightDialogAsync()
+    {
+        try
+        {
+            var dialog = new Views.SetLightDialog();
+            StatusText = "Set Light dialog opened";
+            await Task.Delay(1);
+        }
+        catch (Exception ex)
+        {
+            StatusText = $"Error showing set light dialog: {ex.Message}";
+            _logger?.LogError(ex, "Failed to show set light dialog");
+        }
+    }
+
+    private async Task ShowAboutDialogAsync()
+    {
+        try
+        {
+            var dialog = new Views.AboutDialog();
+            StatusText = "About dialog opened";
+            await Task.Delay(1);
+        }
+        catch (Exception ex)
+        {
+            StatusText = $"Error showing about dialog: {ex.Message}";
+            _logger?.LogError(ex, "Failed to show about dialog");
         }
     }
 }

@@ -42,12 +42,18 @@
                 <MenuItem Header="Show _Objects"/>
             </MenuItem>
             <MenuItem Header="_Tools">
+                <MenuItem Header="_Jump to Coordinates" Click="OnJumpClick"/>
+                <Separator/>
+                <MenuItem Header="Set _Animation Properties" Click="OnSetAnimationClick"/>
+                <MenuItem Header="Set _Door Properties" Click="OnSetDoorClick"/>
+                <MenuItem Header="Set _Light Properties" Click="OnSetLightClick"/>
+                <Separator/>
                 <MenuItem Header="_Library Manager"/>
                 <MenuItem Header="_Map Properties"/>
                 <MenuItem Header="_Cell Information"/>
             </MenuItem>
             <MenuItem Header="_Help">
-                <MenuItem Header="_About"/>
+                <MenuItem Header="_About" Click="OnAboutClick"/>
             </MenuItem>
         </Menu>
 

@@ -1,0 +1,55 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:Mir2.Editor.ViewModels"
+        x:Class="Mir2.Editor.Views.JumpDialog"
+        Title="Jump to Coordinates"
+        Width="300" Height="200"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False">
+  
+  <Design.DataContext>
+    <vm:JumpDialogViewModel />
+  </Design.DataContext>
+
+  <Grid Margin="20" x:DataType="vm:JumpDialogViewModel">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="*"/>
+      <RowDefinition Height="Auto"/>
+    </Grid.RowDefinitions>
+    
+    <TextBlock Grid.Row="0" Text="Enter coordinates to jump to:" 
+               Margin="0,0,0,15" HorizontalAlignment="Center"/>
+    
+    <Grid Grid.Row="1" Margin="0,5">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto"/>
+        <ColumnDefinition Width="*"/>
+      </Grid.ColumnDefinitions>
+      <TextBlock Grid.Column="0" Text="X:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+      <TextBox Grid.Column="1" Name="txtX" Text="{Binding X}" 
+               Watermark="X coordinate"/>
+    </Grid>
+    
+    <Grid Grid.Row="2" Margin="0,5">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto"/>
+        <ColumnDefinition Width="*"/>
+      </Grid.ColumnDefinitions>
+      <TextBlock Grid.Column="0" Text="Y:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+      <TextBox Grid.Column="1" Name="txtY" Text="{Binding Y}" 
+               Watermark="Y coordinate"/>
+    </Grid>
+
+    <StackPanel Grid.Row="5" Orientation="Horizontal" 
+                HorizontalAlignment="Right" Margin="0,20,0,0">
+      <Button Name="btnOK" Content="Jump" Width="80" Margin="0,0,10,0"
+              Command="{Binding JumpCommand}" IsDefault="True"/>
+      <Button Name="btnCancel" Content="Cancel" Width="80" 
+              Command="{Binding CancelCommand}" IsCancel="True"/>
+    </StackPanel>
+  </Grid>
+</Window>
