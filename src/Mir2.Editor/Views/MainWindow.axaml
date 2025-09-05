@@ -55,7 +55,7 @@
         <Grid Grid.Row="1" ColumnDefinitions="200,5,*,5,300">
             
             <!-- Left Panel - Library Browser -->
-            <Border Grid.Column="0" Background="#F5F5F5" BorderBrush="#CCCCCC" BorderThickness="0,0,1,0">
+            <Border Grid.Column="0" BorderThickness="0,0,1,0">
                 <StackPanel Margin="10">
                     <TextBlock Text="Libraries" FontWeight="Bold" Margin="0,0,0,10"/>
                     <Button Content="Initialize" Click="OnInitializeClick" 
@@ -65,7 +65,7 @@
                             <DataTemplate>
                                 <StackPanel>
                                     <TextBlock Text="{Binding Name}" FontWeight="Bold"/>
-                                    <TextBlock Text="{Binding Type}" FontSize="12" Foreground="Gray"/>
+                                    <TextBlock Text="{Binding Type}" FontSize="12"/>
                                 </StackPanel>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
@@ -78,25 +78,25 @@
                 </StackPanel>
             </Border>
 
-            <GridSplitter Grid.Column="1" Background="Gray"/>
+            <GridSplitter Grid.Column="1"/>
 
             <!-- Center Panel - Map Editor -->
-            <Border Grid.Column="2" Background="White" BorderBrush="#CCCCCC" BorderThickness="1">
+            <Border Grid.Column="2" BorderThickness="1">
                 <Grid>
                     <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-                        <Canvas Name="MapCanvas" Background="LightGray" Width="1600" Height="1200">
+                        <Canvas Name="MapCanvas" Background="#2D2D30" Width="1600" Height="1200">
                             <!-- Map rendering will go here -->
-                            <Rectangle Fill="LightBlue" Width="1600" Height="1200" Opacity="0.3"/>
+                            <Rectangle Fill="#404040" Width="1600" Height="1200" Opacity="0.3"/>
                             <TextBlock Text="Map Editor Area&#x0a;(Map rendering will be implemented here)" 
                                      Canvas.Left="400" Canvas.Top="300" 
-                                     FontSize="16" Foreground="DarkBlue" 
+                                     FontSize="16" Foreground="#E0E0E0" 
                                      HorizontalAlignment="Center"/>
                         </Canvas>
                     </ScrollViewer>
                     
                     <!-- Map Controls Overlay -->
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Right" 
-                               Margin="10" Background="White" Opacity="0.9">
+                               Margin="10" Background="#3C3C3C" Opacity="0.9">
                         <Button Content="+" Margin="2"/>
                         <Button Content="-" Margin="2"/>
                         <Button Content="Reset" Margin="2"/>
@@ -104,17 +104,17 @@
                     
                     <!-- Map Info Overlay -->
                     <StackPanel VerticalAlignment="Top" HorizontalAlignment="Left" 
-                               Margin="10" Background="White" Opacity="0.9">
+                               Margin="10" Background="#3C3C3C" Opacity="0.9">
                         <TextBlock Text="{Binding MapWidth, StringFormat='Width: {0}'}" Margin="5"/>
                         <TextBlock Text="{Binding MapHeight, StringFormat='Height: {0}'}" Margin="5"/>
                     </StackPanel>
                 </Grid>
             </Border>
 
-            <GridSplitter Grid.Column="3" Background="Gray"/>
+            <GridSplitter Grid.Column="3"/>
 
             <!-- Right Panel - Properties and Tools -->
-            <Border Grid.Column="4" Background="#F5F5F5" BorderBrush="#CCCCCC" BorderThickness="1,0,0,0">
+            <Border Grid.Column="4" BorderThickness="1,0,0,0">
                 <StackPanel Margin="10">
                     <TextBlock Text="Properties" FontWeight="Bold" Margin="0,0,0,10"/>
                     
@@ -161,7 +161,7 @@
         </Grid>
 
         <!-- Status Bar -->
-        <Border Grid.Row="2" Background="#F0F0F0" BorderBrush="#CCCCCC" BorderThickness="0,1,0,0">
+        <Border Grid.Row="2" BorderThickness="0,1,0,0">
             <Grid ColumnDefinitions="*,Auto,Auto,Auto">
                 <TextBlock Grid.Column="0" Text="{Binding StatusText}" 
                           Margin="10,5" VerticalAlignment="Center"/>
