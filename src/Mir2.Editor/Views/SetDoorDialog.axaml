@@ -1,0 +1,58 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:Mir2.Editor.ViewModels"
+        x:Class="Mir2.Editor.Views.SetDoorDialog"
+        Title="Set Door Properties"
+        Width="350" Height="250"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False">
+  
+  <Design.DataContext>
+    <vm:SetDoorDialogViewModel />
+  </Design.DataContext>
+
+  <Grid Margin="20" x:DataType="vm:SetDoorDialogViewModel">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="*"/>
+      <RowDefinition Height="Auto"/>
+    </Grid.RowDefinitions>
+    
+    <TextBlock Grid.Row="0" Text="Set door properties:" 
+               Margin="0,0,0,15" HorizontalAlignment="Center"/>
+    
+    <CheckBox Grid.Row="1" Name="chkCoreDoor" Content="Core Door" 
+              IsChecked="{Binding IsDoor}" Margin="0,5"/>
+    
+    <Grid Grid.Row="2" Margin="0,5">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto"/>
+        <ColumnDefinition Width="*"/>
+      </Grid.ColumnDefinitions>
+      <TextBlock Grid.Column="0" Text="Door Index:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+      <TextBox Grid.Column="1" Name="txtDoorIndex" Text="{Binding Index}" 
+               Watermark="0-255"/>
+    </Grid>
+    
+    <Grid Grid.Row="3" Margin="0,5">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto"/>
+        <ColumnDefinition Width="*"/>
+      </Grid.ColumnDefinitions>
+      <TextBlock Grid.Column="0" Text="Door Offset:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+      <TextBox Grid.Column="1" Name="txtDoorOffSet" Text="{Binding Offset}" 
+               Watermark="0-255"/>
+    </Grid>
+
+    <StackPanel Grid.Row="5" Orientation="Horizontal" 
+                HorizontalAlignment="Right" Margin="0,20,0,0">
+      <Button Name="btnOK" Content="Set" Width="80" Margin="0,0,10,0"
+              Command="{Binding SetCommand}" IsDefault="True"/>
+      <Button Name="btnCancel" Content="Cancel" Width="80" 
+              Command="{Binding CancelCommand}" IsCancel="True"/>
+    </StackPanel>
+  </Grid>
+</Window>
