@@ -16,6 +16,9 @@ namespace Mir2.Editor.ViewModels;
 
 public class MainWindowViewModel : ReactiveObject
 {
+    private static readonly string LogsDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Mir2Editor", "Logs");
+    private static readonly string StartupLogFile = Path.Combine(LogsDirectory, $"startup_{DateTime.Now:yyyyMMdd_HHmmss}.log");
+    
     private string _title = "Mir2 Map Editor - Unified Edition";
     private string _statusText = "Ready";
     private LibraryCatalog? _libraryCatalog;
@@ -33,7 +36,7 @@ public class MainWindowViewModel : ReactiveObject
     {
         try
         {
-            ApplicationLogger.LogInfo("MainWindowViewModel constructor called - Initializing commands...", "VIEWMODEL");
+            LogStartup("MainWindowViewModel constructor called - Initializing commands...");
             
             InitializeCommand = ReactiveCommand.CreateFromTask(InitializeAsync);
             LoadMapCommand = ReactiveCommand.CreateFromTask(LoadMapAsync);
@@ -44,11 +47,11 @@ public class MainWindowViewModel : ReactiveObject
             
             Libraries = new ObservableCollection<LibraryItem>();
             
-            ApplicationLogger.LogInfo("MainWindowViewModel constructor completed successfully", "VIEWMODEL");
+            LogStartup("MainWindowViewModel constructor completed successfully");
         }
         catch (Exception ex)
         {
-            ApplicationLogger.LogError("MainWindowViewModel constructor failed", ex, "VIEWMODEL");
+            LogStartup($"ERROR in MainWindowViewModel constructor: {ex}");
             throw;
         }
     }
@@ -100,10 +103,8 @@ public class MainWindowViewModel : ReactiveObject
 
     private async Task InitializeAsync()
     {
-        var startTime = DateTime.Now;
         try
         {
-            ApplicationLogger.LogInfo("Initializing map editor...", "VIEWMODEL");
             StatusText = "Initializing...";
             
             var host = await Program.GetHostAsync();
@@ -113,12 +114,8 @@ public class MainWindowViewModel : ReactiveObject
             _editorService = host.Services.GetRequiredService<EditorService>();
             _logger = host.Services.GetRequiredService<ILogger<MainWindowViewModel>>();
 
-            ApplicationLogger.LogInfo("Scanning for libraries...", "VIEWMODEL");
             StatusText = "Scanning for libraries...";
-            
-            var scanStartTime = DateTime.Now;
             await _libraryCatalog.ScanLibrariesAsync();
-            ApplicationLogger.LogPerformance("Library scanning", DateTime.Now - scanStartTime, "VIEWMODEL");
 
             var wemadeMir2Libs = _libraryCatalog.GetLibrariesByType(LibraryType.WemadeMir2).ToList();
             var shandaMir2Libs = _libraryCatalog.GetLibrariesByType(LibraryType.ShandaMir2).ToList();
@@ -130,11 +127,7 @@ public class MainWindowViewModel : ReactiveObject
                 Libraries.Add(lib);
             }
 
-            var totalLibs = wemadeMir2Libs.Count + shandaMir2Libs.Count + wemadeMir3Libs.Count;
             StatusText = $"Found {wemadeMir2Libs.Count} Wemade Mir2, {shandaMir2Libs.Count} Shanda Mir2, {wemadeMir3Libs.Count} Wemade Mir3 libraries";
-            
-            ApplicationLogger.LogInfo($"Found {totalLibs} total libraries ({wemadeMir2Libs.Count} Wemade Mir2, {shandaMir2Libs.Count} Shanda Mir2, {wemadeMir3Libs.Count} Wemade Mir3)", "VIEWMODEL");
-            ApplicationLogger.LogPerformance("Map editor initialization", DateTime.Now - startTime, "VIEWMODEL");
             
             _logger?.LogInformation("Map editor initialized successfully");
             UpdateUndoRedoState();
@@ -142,77 +135,60 @@ public class MainWindowViewModel : ReactiveObject
         catch (Exception ex)
         {
             StatusText = $"Error: {ex.Message}";
-            ApplicationLogger.LogError("Failed to initialize map editor", ex, "VIEWMODEL");
             _logger?.LogError(ex, "Failed to initialize map editor");
         }
     }
 
     private async Task LoadMapAsync()
     {
-        var startTime = DateTime.Now;
         try
         {
             if (_mapReader == null || _editorService == null)
             {
                 StatusText = "Please initialize first";
-                ApplicationLogger.LogWarning("Attempted to load map before initialization", "VIEWMODEL");
                 return;
             }
 
-            ApplicationLogger.LogUsage("User initiated map loading", "VIEWMODEL");
             StatusText = "Loading map...";
-            
             // TODO: Add file dialog
             var mapPath = "test_map.map";
             if (System.IO.File.Exists(mapPath))
             {
-                ApplicationLogger.LogInfo($"Loading map from: {mapPath}", "VIEWMODEL");
-                
                 var map = await _mapReader.ReadAsync(mapPath);
                 _editorService.CurrentMap = map;
                 MapWidth = map.Width;
                 MapHeight = map.Height;
-                
                 StatusText = $"Loaded map: {map.Width}x{map.Height} ({map.FormatType})";
-                ApplicationLogger.LogInfo($"Successfully loaded map: {map.Width}x{map.Height}, format: {map.FormatType}", "VIEWMODEL");
-                ApplicationLogger.LogPerformance("Map loading", DateTime.Now - startTime, "VIEWMODEL");
-                
                 UpdateUndoRedoState();
             }
             else
             {
                 StatusText = "No test map found";
-                ApplicationLogger.LogWarning($"Map file not found: {mapPath}", "VIEWMODEL");
             }
         }
         catch (Exception ex)
         {
             StatusText = $"Error loading map: {ex.Message}";
-            ApplicationLogger.LogError("Failed to load map", ex, "VIEWMODEL");
             _logger?.LogError(ex, "Failed to load map");
         }
     }
 
     private async Task SaveMapAsync()
     {
-        var startTime = DateTime.Now;
         try
         {
             if (_mapWriter == null || _editorService == null)
             {
                 StatusText = "Please initialize first";
-                ApplicationLogger.LogWarning("Attempted to save map before initialization", "VIEWMODEL");
                 return;
             }
 
-            ApplicationLogger.LogUsage("User initiated map saving", "VIEWMODEL");
             StatusText = "Saving map...";
             
             var mapToSave = _editorService.CurrentMap;
             if (mapToSave == null)
             {
                 // Create a test map for demonstration
-                ApplicationLogger.LogInfo("No current map, creating test map for saving", "VIEWMODEL");
                 mapToSave = new MapData(50, 50);
                 mapToSave.Cells[0, 0] = new CellInfo
                 {
@@ -226,18 +202,12 @@ public class MainWindowViewModel : ReactiveObject
             }
 
             var mapPath = "test_map.map";
-            ApplicationLogger.LogInfo($"Saving map to: {mapPath} (size: {mapToSave.Width}x{mapToSave.Height})", "VIEWMODEL");
-            
             await _mapWriter.WriteAsync(mapToSave, mapPath);
             StatusText = $"Map saved to: {mapPath}";
-            
-            ApplicationLogger.LogInfo($"Successfully saved map to: {mapPath}", "VIEWMODEL");
-            ApplicationLogger.LogPerformance("Map saving", DateTime.Now - startTime, "VIEWMODEL");
         }
         catch (Exception ex)
         {
             StatusText = $"Error saving map: {ex.Message}";
-            ApplicationLogger.LogError("Failed to save map", ex, "VIEWMODEL");
             _logger?.LogError(ex, "Failed to save map");
         }
     }
@@ -322,6 +292,26 @@ public class MainWindowViewModel : ReactiveObject
         {
             CanUndo = _editorService.UndoCount > 0;
             CanRedo = _editorService.RedoCount > 0;
+        }
+    }
+
+    private static void LogStartup(string message)
+    {
+        var timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
+        var logMessage = $"[{timestamp}] [VIEWMODEL] {message}";
+        
+        // Log to console
+        Console.WriteLine(logMessage);
+        
+        // Log to file
+        try
+        {
+            Directory.CreateDirectory(LogsDirectory);
+            File.AppendAllText(StartupLogFile, logMessage + Environment.NewLine);
+        }
+        catch
+        {
+            // Ignore file logging errors to prevent infinite loops
         }
     }
 }
