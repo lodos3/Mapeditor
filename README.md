@@ -11,6 +11,12 @@ A modern, cross-platform map editor for Mir2 game maps, consolidating functional
 - **Library Management**: Automatic scanning and cataloging of Wemade Mir2, Shanda Mir2, and Mir3 libraries
 - **Undo/Redo System**: Full undo/redo stack with unlimited levels
 - **Map Editing**: Core map editing functionality with cell-level precision
+- **Single-File Distribution**: Self-contained executable with no scattered DLL files
+
+### Supported Map Formats
+The editor supports 9 different map format types:
+- **Type 0-7**: Various legacy formats (Wemade, Shanda, Mir3, AntiHack, Heroes)
+- **Type 100**: Modern C# custom format
 
 ### User Interface
 - **Library Browser**: Browse and preview available texture libraries
@@ -19,49 +25,37 @@ A modern, cross-platform map editor for Mir2 game maps, consolidating functional
 - **Tool Palette**: Select between different editing modes (select, paint, erase, fill)
 - **Status Bar**: Real-time feedback on operations and current state
 
-## Architecture
+## Quick Start
 
-The solution is organized into several key projects:
+### Building from Source
 
-### src/Mir2.Core
-Core functionality including:
-- **Models**: `MapData`, `CellInfo`, `LibraryItem`, etc.
-- **Services**: `LibraryCatalog` for library management
-- **I/O**: `MapReader` and `MapWriter` for file operations
+See [BUILD.md](BUILD.md) for detailed build instructions.
 
-### src/Mir2.Editor
-The main GUI application featuring:
-- **Views**: AvaloniaUI-based user interface
-- **ViewModels**: MVVM pattern with ReactiveUI
-- **Services**: `EditorService` for map editing operations
+**Quick build commands:**
 
-### src/Mir2.Render
-Rendering functionality (future expansion for map visualization)
-
-### tests/Mir2.Core.Tests
-Comprehensive unit tests (29 tests, all passing)
-
-## Getting Started
-
-### Prerequisites
-- .NET 8.0 SDK or later
-- Visual Studio 2022, VS Code, or JetBrains Rider
-
-### Building the Application
+Windows:
 ```bash
-# Clone the repository
-git clone <repository-url>
+git clone https://github.com/lodos3/Mapeditor.git
 cd Mapeditor
+build-windows.bat
+```
 
-# Build the solution
+Linux:
+```bash
+git clone https://github.com/lodos3/Mapeditor.git
+cd Mapeditor
+./build-linux.sh
+```
+
+### Development
+```bash
+# Build for development
 dotnet build
 
 # Run the application
 dotnet run --project src/Mir2.Editor/Mir2.Editor.csproj
-```
 
-### Running Tests
-```bash
+# Run tests
 dotnet test
 ```
 
