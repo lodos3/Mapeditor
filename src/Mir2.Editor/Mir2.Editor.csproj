@@ -29,4 +29,8 @@
     <ProjectReference Include="..\Mir2.Render\Mir2.Render.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <AvaloniaResource Include="Assets\**" />
+  </ItemGroup>
+
 </Project>
