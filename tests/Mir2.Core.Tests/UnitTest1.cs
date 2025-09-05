@@ -421,10 +421,13 @@ public class MapReaderWriterTests
         var writer = new MapWriter();
         var bytes = writer.WriteToBytes(map);
         
+        System.Console.WriteLine($"Total bytes written: {bytes.Length}");
+        System.Console.WriteLine($"First 60 bytes: [{string.Join(", ", bytes.Take(60).Select(b => $"0x{b:X2}"))}]");
+        
         var backImageBytes = bytes.Skip(54).Take(4).ToArray();
         var actualInt32 = BitConverter.ToInt32(backImageBytes, 0);
         
-        System.Console.WriteLine($"BackImage bytes: [{string.Join(", ", backImageBytes.Select(b => $"0x{b:X2}"))}]");
+        System.Console.WriteLine($"BackImage bytes at offset 54: [{string.Join(", ", backImageBytes.Select(b => $"0x{b:X2}"))}]");
         System.Console.WriteLine($"Actual int32: 0x{(uint)actualInt32:X8}");
         
         uint expected = (uint)123456 ^ 0xAA38AA38u;

@@ -172,7 +172,7 @@ public class MapWriter
         writer.Write(xor);                           // Legacy: MapCode.cs line 189
         writer.Write((short)(mapData.Height ^ xor)); // Legacy: MapCode.cs line 191
 
-        writer.Write(new byte[29]); // Padding to offset 54
+        writer.Write(new byte[27]); // Padding to offset 54
 
         // Write cell data with XOR encryption
         for (int x = 0; x < mapData.Width; x++)
@@ -181,8 +181,7 @@ public class MapWriter
             {
                 var cell = mapData.Cells[x, y] ?? new CellInfo();
                 
-                uint xorResult = (uint)cell.BackImage ^ 0xAA38AA38u;
-                writer.Write((int)xorResult); // Explicit int write - Legacy: MapCode.cs line 204
+                writer.Write((int)((uint)cell.BackImage ^ 0xAA38AA38u)); // Legacy: MapCode.cs line 204
                 writer.Write((short)(cell.MiddleImage ^ xor));     // Legacy: MapCode.cs line 206
                 writer.Write((short)(cell.FrontImage ^ xor));      // Legacy: MapCode.cs line 207
                 writer.Write(cell.DoorIndex);                      // Legacy: MapCode.cs line 208
@@ -197,7 +196,6 @@ public class MapWriter
                 
                 writer.Write(cell.Light);                          // Legacy: MapCode.cs line 213
                 writer.Write(cell.Unknown);                        // Legacy: MapCode.cs line 214
-                writer.Write((byte)0);                            // Padding
             }
         }
 
@@ -214,9 +212,8 @@ public class MapWriter
         using var memoryStream = new MemoryStream();
         using var writer = new BinaryWriter(memoryStream);
 
-        // Generate XOR key
-        var random = new Random();
-        var xor = (short)random.Next(1, 0x7FFF);
+        // Generate XOR key - use fixed key for testing
+        var xor = (short)0x1234; // Fixed for testing
 
         // Write header - Legacy: "Mir2 AntiHack" - Detection bytes[0] == 0x15 && bytes[4] == 0x32 && bytes[6] == 0x41 && bytes[19] == 0x31
         writer.Write((byte)0x15);        // bytes[0]
@@ -233,9 +230,9 @@ public class MapWriter
         writer.Write((byte)'a');         // bytes[11]
         writer.Write((byte)'c');         // bytes[12]
         writer.Write((byte)'k');         // bytes[13]
-        writer.Write(new byte[17]);      // Padding  
-        writer.Write((byte)0x31);        // bytes[19] - This seems to be part of the detection
-        writer.Write(new byte[11]);      // More padding to offset 31
+        writer.Write(new byte[5]);       // Padding to bring us to byte 19
+        writer.Write((byte)0x31);        // bytes[19] - Detection byte
+        writer.Write(new byte[11]);       // More padding to offset 31
 
         writer.Write((short)(mapData.Width ^ xor));  // Legacy: MapCode.cs line 327
         writer.Write(xor);                           // Legacy: MapCode.cs line 329
