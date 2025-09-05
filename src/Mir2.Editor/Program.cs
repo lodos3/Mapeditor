@@ -17,8 +17,6 @@ namespace Mir2.Editor;
 class Program
 {
     private static IHost? _host;
-    private static readonly string LogsDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Mir2Editor", "Logs");
-    private static readonly string StartupLogFile = Path.Combine(LogsDirectory, $"startup_{DateTime.Now:yyyyMMdd_HHmmss}.log");
 
     // Initialization code. Don't use any Avalonia, third-party APIs or any
     // SynchronizationContext-reliant code before AppMain is called: things aren't initialized
@@ -26,16 +24,15 @@ class Program
     [STAThread]
     public static void Main(string[] args)
     {
-        // Ensure logs directory exists
+        // Initialize logging
         try
         {
-            Directory.CreateDirectory(LogsDirectory);
-            LogStartup("=== Map Editor Startup Log ===");
-            LogStartup($"Application starting at: {DateTime.Now}");
-            LogStartup($"Command line args: {string.Join(" ", args)}");
-            LogStartup($"Current directory: {Environment.CurrentDirectory}");
-            LogStartup($"Runtime version: {Environment.Version}");
-            LogStartup($"Platform: {Environment.OSVersion}");
+            StartupLogger.LogStartup("=== Map Editor Startup Log ===");
+            StartupLogger.LogStartup($"Application starting at: {DateTime.Now}");
+            StartupLogger.LogStartup($"Command line args: {string.Join(" ", args)}");
+            StartupLogger.LogStartup($"Current directory: {Environment.CurrentDirectory}");
+            StartupLogger.LogStartup($"Runtime version: {Environment.Version}");
+            StartupLogger.LogStartup($"Platform: {Environment.OSVersion}");
         }
         catch (Exception ex)
         {
@@ -44,18 +41,18 @@ class Program
 
         try
         {
-            LogStartup("Building Avalonia application...");
+            StartupLogger.LogStartup("Building Avalonia application...");
             var app = BuildAvaloniaApp();
-            LogStartup("Avalonia app built successfully");
+            StartupLogger.LogStartup("Avalonia app built successfully");
 
-            LogStartup("Starting with classic desktop lifetime...");
+            StartupLogger.LogStartup("Starting with classic desktop lifetime...");
             app.StartWithClassicDesktopLifetime(args);
-            LogStartup("Application exited normally");
+            StartupLogger.LogStartup("Application exited normally");
         }
         catch (Exception ex)
         {
             var errorMsg = $"FATAL ERROR during application startup: {ex}";
-            LogStartup(errorMsg);
+            StartupLogger.LogStartup(errorMsg);
             Console.WriteLine(errorMsg);
             
             // Check if this is a display-related error
@@ -71,7 +68,7 @@ class Program
                 Console.WriteLine("1. Use VNC or remote desktop to provide a display");
                 Console.WriteLine("2. Set up X11 forwarding if using SSH");
                 Console.WriteLine("3. Use a virtual display (Xvfb) for automated testing");
-                Console.WriteLine($"\nDetailed logs have been saved to: {StartupLogFile}");
+                Console.WriteLine($"\nDetailed logs have been saved to: {StartupLogger.StartupLogFile}");
                 Console.WriteLine("=== END DISPLAY ERROR INFO ===\n");
             }
             
@@ -94,39 +91,20 @@ class Program
     {
         try
         {
-            LogStartup("Configuring Avalonia app builder...");
+            StartupLogger.LogStartup("Configuring Avalonia app builder...");
             var builder = AppBuilder.Configure<App>()
                 .UsePlatformDetect()
                 .WithInterFont()
                 .LogToTrace()
                 .UseReactiveUI();
             
-            LogStartup("Avalonia app builder configured successfully");
+            StartupLogger.LogStartup("Avalonia app builder configured successfully");
             return builder;
         }
         catch (Exception ex)
         {
-            LogStartup($"ERROR in BuildAvaloniaApp: {ex}");
+            StartupLogger.LogStartup($"ERROR in BuildAvaloniaApp: {ex}");
             throw;
-        }
-    }
-
-    private static void LogStartup(string message)
-    {
-        var timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
-        var logMessage = $"[{timestamp}] {message}";
-        
-        // Log to console
-        Console.WriteLine(logMessage);
-        
-        // Log to file
-        try
-        {
-            File.AppendAllText(StartupLogFile, logMessage + Environment.NewLine);
-        }
-        catch
-        {
-            // Ignore file logging errors to prevent infinite loops
         }
     }
 
