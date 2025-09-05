@@ -3,27 +3,24 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Mir2.Editor.ViewModels;
 using Mir2.Editor.Views;
+using Mir2.Editor.Services;
 using System;
-using System.IO;
 
 namespace Mir2.Editor;
 
 public partial class App : Application
 {
-    private static readonly string LogsDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Mir2Editor", "Logs");
-    private static readonly string StartupLogFile = Path.Combine(LogsDirectory, $"startup_{DateTime.Now:yyyyMMdd_HHmmss}.log");
-
     public override void Initialize()
     {
         try
         {
-            LogStartup("App.Initialize() called - Loading XAML...");
+            StartupLogger.LogStartup("App.Initialize() called - Loading XAML...", "APP");
             AvaloniaXamlLoader.Load(this);
-            LogStartup("App.Initialize() completed successfully");
+            StartupLogger.LogStartup("App.Initialize() completed successfully", "APP");
         }
         catch (Exception ex)
         {
-            LogStartup($"ERROR in App.Initialize(): {ex}");
+            StartupLogger.LogStartup($"ERROR in App.Initialize(): {ex}", "APP");
             throw;
         }
     }
@@ -32,50 +29,30 @@ public partial class App : Application
     {
         try
         {
-            LogStartup("App.OnFrameworkInitializationCompleted() called");
+            StartupLogger.LogStartup("App.OnFrameworkInitializationCompleted() called", "APP");
             
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                LogStartup("Creating MainWindow...");
+                StartupLogger.LogStartup("Creating MainWindow...", "APP");
                 desktop.MainWindow = new MainWindow
                 {
                     DataContext = new MainWindowViewModel(),
                 };
-                LogStartup("MainWindow created successfully");
+                StartupLogger.LogStartup("MainWindow created successfully", "APP");
             }
             else
             {
-                LogStartup($"WARNING: ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime, type: {ApplicationLifetime?.GetType().Name ?? "null"}");
+                StartupLogger.LogStartup($"WARNING: ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime, type: {ApplicationLifetime?.GetType().Name ?? "null"}", "APP");
             }
 
-            LogStartup("Calling base.OnFrameworkInitializationCompleted()...");
+            StartupLogger.LogStartup("Calling base.OnFrameworkInitializationCompleted()...", "APP");
             base.OnFrameworkInitializationCompleted();
-            LogStartup("App.OnFrameworkInitializationCompleted() completed successfully");
+            StartupLogger.LogStartup("App.OnFrameworkInitializationCompleted() completed successfully", "APP");
         }
         catch (Exception ex)
         {
-            LogStartup($"ERROR in App.OnFrameworkInitializationCompleted(): {ex}");
+            StartupLogger.LogStartup($"ERROR in App.OnFrameworkInitializationCompleted(): {ex}", "APP");
             throw;
-        }
-    }
-
-    private static void LogStartup(string message)
-    {
-        var timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
-        var logMessage = $"[{timestamp}] [APP] {message}";
-        
-        // Log to console
-        Console.WriteLine(logMessage);
-        
-        // Log to file
-        try
-        {
-            Directory.CreateDirectory(LogsDirectory);
-            File.AppendAllText(StartupLogFile, logMessage + Environment.NewLine);
-        }
-        catch
-        {
-            // Ignore file logging errors to prevent infinite loops
         }
     }
 }
