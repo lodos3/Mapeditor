@@ -6,7 +6,6 @@
         mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
         x:Class="Mir2.Editor.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
-        Icon="/Assets/avalonia-logo.ico"
         Title="{Binding Title}"
         MinWidth="1000" MinHeight="600"
         Width="1200" Height="800">
