@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Arkoura.WorldGen
@@ -7,6 +6,7 @@ namespace Arkoura.WorldGen
     {
         [SerializeField] private WorldSpec 世界规格;
         [SerializeField] private AssetLibrary 资产库;
+        [SerializeField] private bool 生成自然资产 = true;
         [SerializeField] private bool 生成聚落 = true;
         [SerializeField] private bool 自动建立邻居 = true;
         [SerializeField] private Transform 生成根节点;
@@ -51,6 +51,7 @@ namespace Arkoura.WorldGen
             }
 
             if (自动建立邻居) LinkNeighbors(地形网格, 数量);
+            if (生成自然资产 && 资产库 != null) GenerateScatter(地形网格, 数量);
             if (生成聚落 && 资产库 != null) GenerateSettlements(地形网格, 数量);
         }
 
@@ -73,6 +74,19 @@ namespace Arkoura.WorldGen
                 Terrain 下 = z > 0 ? 网格[x, z - 1] : null;
                 Terrain 上 = z < 数量 - 1 ? 网格[x, z + 1] : null;
                 网格[x, z].SetNeighbors(左, 上, 右, 下);
+            }
+        }
+
+        private void GenerateScatter(Terrain[,] 网格, int 数量)
+        {
+            var 散布根 = new GameObject("Scatter").transform;
+            散布根.SetParent(生成根节点, false);
+            for (int z = 0; z < 数量; z++)
+            for (int x = 0; x < 数量; x++)
+            {
+                var 分块根 = new GameObject($"Scatter_{x}_{z}").transform;
+                分块根.SetParent(散布根, false);
+                AssetScatterGenerator.Generate(网格[x, z], 世界规格, 资产库, new Vector2Int(x, z), 分块根);
             }
         }
 
