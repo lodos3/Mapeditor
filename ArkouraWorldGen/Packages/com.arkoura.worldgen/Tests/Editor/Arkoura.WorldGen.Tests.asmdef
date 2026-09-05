@@ -1,0 +1,6 @@
+{
+  "name": "Arkoura.WorldGen.Tests",
+  "references": ["Arkoura.WorldGen.Runtime"],
+  "includePlatforms": ["Editor"],
+  "optionalUnityReferences": ["TestAssemblies"]
+}
