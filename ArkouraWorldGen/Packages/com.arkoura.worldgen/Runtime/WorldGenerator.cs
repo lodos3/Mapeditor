@@ -8,6 +8,7 @@ namespace Arkoura.WorldGen
         [SerializeField] private AssetLibrary 资产库;
         [SerializeField] private bool 生成自然资产 = true;
         [SerializeField] private bool 生成聚落 = true;
+        [SerializeField] private bool 生成环境语义 = true;
         [SerializeField] private bool 自动建立邻居 = true;
         [SerializeField] private Transform 生成根节点;
 
@@ -32,13 +33,20 @@ namespace Arkoura.WorldGen
             {
                 for (int x = 0; x < 数量; x++)
                 {
+                    WorldSemanticFields 语义场 = null;
+                    if (生成环境语义)
+                    {
+                        语义场 = WorldSemanticFields.Build(世界规格, x, z, 世界规格.SemanticResolution);
+                        HydrologyGenerator.Solve(语义场, 世界规格, 世界规格.Hydrology);
+                    }
+
                     var 数据 = new TerrainData
                     {
                         heightmapResolution = 世界规格.HeightResolution,
                         size = new Vector3(世界规格.ChunkSize, 世界规格.MaxTerrainHeight, 世界规格.ChunkSize)
                     };
                     数据.SetHeights(0, 0, HeightFieldGenerator.Generate(世界规格, x, z));
-                    SplatMapGenerator.Apply(数据, 世界规格);
+                    SplatMapGenerator.Apply(数据, 世界规格, 语义场);
                     var 对象 = Terrain.CreateTerrainGameObject(数据);
                     对象.name = $"Chunk_{x}_{z}";
                     对象.transform.SetParent(生成根节点, false);
@@ -46,6 +54,14 @@ namespace Arkoura.WorldGen
                     var 分块 = 对象.AddComponent<WorldChunk>();
                     分块.Coordinate = new Vector2Int(x, z);
                     分块.WorldBounds = new Bounds(对象.transform.position + new Vector3(世界规格.ChunkSize * 0.5f, 世界规格.MaxTerrainHeight * 0.5f, 世界规格.ChunkSize * 0.5f), new Vector3(世界规格.ChunkSize, 世界规格.MaxTerrainHeight, 世界规格.ChunkSize));
+
+                    if (语义场 != null)
+                    {
+                        var 环境数据 = 对象.AddComponent<WorldChunkEnvironmentData>();
+                        var 水体 = WaterNetworkBuilder.Build(语义场, 世界规格, 对象.transform.position);
+                        var 悬崖 = CliffBandExtractor.Extract(语义场, 对象.transform.position, 世界规格.ChunkSize, 世界规格.MaxTerrainHeight);
+                        环境数据.Initialize(语义场, 水体, 悬崖);
+                    }
                     地形网格[x, z] = 对象.GetComponent<Terrain>();
                 }
             }

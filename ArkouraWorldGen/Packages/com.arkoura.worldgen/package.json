@@ -1,8 +1,8 @@
 {
   "name": "com.arkoura.worldgen",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "displayName": "Arkoura AI World Generator",
-  "description": "用于 Unity 的确定性、分块式、资产驱动 3D 世界生成框架。",
+  "description": "用于 Unity 6 的确定性、分块式、资产驱动 AAA 级 3D 世界生成框架，包含语义场、水文、地表、道路、水体、照明、流送和可选环境插件适配层。",
   "unity": "6000.0",
   "author": {
     "name": "Arkoura"

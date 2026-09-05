@@ -4,7 +4,32 @@ namespace Arkoura.WorldGen
 {
     public static class SplatMapGenerator
     {
-        public static void Apply(TerrainData 地形数据, WorldSpec 规格)
+        public static void Apply(TerrainData 地形数据, WorldSpec 规格, WorldSemanticFields 语义场 = null)
+        {
+            if (地形数据 == null || 规格 == null) return;
+            if (规格.SurfaceProfile != null && 语义场 != null && 规格.SurfaceProfile.Rules.Count > 0)
+            {
+                ApplySemanticProfile(地形数据, 规格.SurfaceProfile, 语义场);
+                return;
+            }
+            ApplyLegacyRules(地形数据, 规格);
+        }
+
+        private static void ApplySemanticProfile(TerrainData 地形数据, SurfaceProfile 配置, WorldSemanticFields 语义场)
+        {
+            int 层数 = 配置.Rules.Count;
+            var 地形层 = new TerrainLayer[层数];
+            for (int i = 0; i < 层数; i++) 地形层[i] = 配置.Rules[i].地形层;
+            地形数据.terrainLayers = 地形层;
+
+            float[,,] 语义权重 = SurfaceWeightGenerator.Generate(语义场, 配置);
+            if (语义权重 == null) return;
+            int 目标分辨率 = 语义场.Resolution;
+            地形数据.alphamapResolution = 目标分辨率;
+            地形数据.SetAlphamaps(0, 0, 语义权重);
+        }
+
+        private static void ApplyLegacyRules(TerrainData 地形数据, WorldSpec 规格)
         {
             int 层数 = 规格.TerrainRules.Count;
             if (层数 == 0) return;
@@ -42,7 +67,6 @@ namespace Arkoura.WorldGen
                         权重图[z, x, 0] = 1f;
                         总权重 = 1f;
                     }
-
                     for (int 层 = 0; 层 < 层数; 层++) 权重图[z, x, 层] /= 总权重;
                 }
             }

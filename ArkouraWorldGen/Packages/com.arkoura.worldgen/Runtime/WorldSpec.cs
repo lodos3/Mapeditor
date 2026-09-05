@@ -46,6 +46,7 @@ namespace Arkoura.WorldGen
         [SerializeField] private int 种子 = 1337;
         [SerializeField] private int 高度图分辨率 = 513;
         [SerializeField] private int 材质图分辨率 = 256;
+        [SerializeField, Range(33, 513)] private int 语义场分辨率 = 129;
 
         [Header("分层地形")]
         [SerializeField, Range(0f, 1f)] private float 海平面归一高度 = 0.18f;
@@ -56,6 +57,14 @@ namespace Arkoura.WorldGen
         [SerializeField, Range(0f, 1f)] private float 中观权重 = 0.27f;
         [SerializeField, Range(0f, 1f)] private float 微观权重 = 0.08f;
         [SerializeField, Range(0f, 1f)] private float 山脊强度 = 0.35f;
+
+        [Header("环境系统")]
+        [SerializeField] private HydrologySettings 水文 = new HydrologySettings();
+        [SerializeField] private SurfaceProfile 地表配置;
+        [SerializeField] private WaterProfile 水体配置;
+        [SerializeField] private RoadProfile 道路配置;
+        [SerializeField] private LightingProfile 照明配置;
+        [SerializeField] private WorldPerformanceBudget 性能预算;
 
         [Header("内容")]
         [SerializeField] private List<RegionSpec> 区域 = new List<RegionSpec>();
@@ -70,6 +79,7 @@ namespace Arkoura.WorldGen
         public int Seed => 种子;
         public int HeightResolution => 高度图分辨率;
         public int AlphaResolution => 材质图分辨率;
+        public int SemanticResolution => 语义场分辨率;
         public float SeaLevel01 => 海平面归一高度;
         public float MacroFrequency => 宏观频率;
         public float MesoFrequency => 中观频率;
@@ -78,6 +88,12 @@ namespace Arkoura.WorldGen
         public float MesoWeight => 中观权重;
         public float MicroWeight => 微观权重;
         public float RidgeStrength => 山脊强度;
+        public HydrologySettings Hydrology => 水文;
+        public SurfaceProfile SurfaceProfile => 地表配置;
+        public WaterProfile WaterProfile => 水体配置;
+        public RoadProfile RoadProfile => 道路配置;
+        public LightingProfile LightingProfile => 照明配置;
+        public WorldPerformanceBudget PerformanceBudget => 性能预算;
         public IReadOnlyList<RegionSpec> Regions => 区域;
         public IReadOnlyList<LandmarkSpec> Landmarks => 地标;
         public IReadOnlyList<TerrainRule> TerrainRules => 地形材质规则;
