@@ -1,0 +1,6 @@
+{
+  "name": "Arkoura.WorldGen.Editor",
+  "rootNamespace": "Arkoura.WorldGen.Editor",
+  "references": ["Arkoura.WorldGen.Runtime"],
+  "includePlatforms": ["Editor"]
+}

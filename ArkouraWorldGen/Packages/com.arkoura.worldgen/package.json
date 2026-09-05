@@ -1,0 +1,10 @@
+{
+  "name": "com.arkoura.worldgen",
+  "version": "0.1.0",
+  "displayName": "Arkoura AI World Generator",
+  "description": "用于 Unity 的确定性、分块式、资产驱动 3D 世界生成框架。",
+  "unity": "6000.0",
+  "author": {
+    "name": "Arkoura"
+  }
+}
